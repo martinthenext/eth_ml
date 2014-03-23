@@ -16,16 +16,18 @@ def get_error_rate(classifier_class, annotations, nfolds=10):
   folds = cross_validation.KFold(len(annotations),n_folds=nfolds)
   classifier = classifier_class()
 
-  for train_indices, test_indices in folds:
-    trainset=np.array([annotations[i] for i in train_indices[:]])
-    classifier.train(trainset)
-    testset=np.array([annotations[i] for i in test_indices[:]])
-    predictions=classifier.predict(testset)
-    sumcost=0
-    for i in range(len(predictions)):
-      sumcost+=int(predictions[i] != annotations[test_indices[i]].get_group_number())
-    sumcostAvg+=float(sumcost)/float(len(testset))
+  annotations = np.array(annotations)
 
-  return float(sumcostAvg)/float(nfolds)
+  fold_errors = []
+  for train_indices, test_indices in folds:
+    classifier.train(annotations[train_indices])
+    predictions=classifier.predict(annotations[test_indices])
+
+    errors = [int(annotations[test_index].get_group_number() != prediction) 
+     for test_index, prediction in zip(test_indices, predictions)]
+
+    fold_errors.append(np.mean(errors))
+
+  return np.mean(fold_errors)
 
 print get_error_rate(models.VeryVeryNaiveBayes, annotations)
