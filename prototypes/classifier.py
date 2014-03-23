@@ -11,6 +11,10 @@ import codecs
 import itertools
 from collections import Counter
 
+import numpy
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+
 sys.stdout = codecs.getwriter('utf-8')(sys.__stdout__)
 
 class Annotation(object):
@@ -80,6 +84,14 @@ for document in ssc.iter("document"):
 
     global_annotations += annotations
 
-print global_annotations[32].get_group_number(), global_annotations[32].grp, global_annotations[32].get_context_string()
-print unicode(global_annotations[32])
-print global_annotations[32].get_highlighted_repr()
+# classification
+vectorizer = CountVectorizer()
+X = vectorizer.fit_transform([annotation.get_context_string() for annotation in global_annotations])
+y = numpy.array([annotation.get_group_number() for annotation in global_annotations])
+
+classifier = MultinomialNB()
+classifier.fit(X, y)
+
+print unicode(global_annotations[0])
+print classifier.predict(X[0])
+print y[0]
