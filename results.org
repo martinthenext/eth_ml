@@ -6,9 +6,27 @@ Training the classifier on non-ambiguous annotations:
 |EMEA|468402|
 |Medline|5152543|
 
+** Annotation counts
+
+|N|Group|*EMEA*|Percent|*Medline*|Percent|
+|1|ANAT|31531|7%|618274|12%|
+|2|PHYS|25074|5%|319140|6%|
+|3|DEVI|12124|3%|66772|1%|
+|4|PHEN|10120|2%|113796|2%|
+|5|OBJC|20440|4%|223999|4%|
+|6|LIVB|65222|14%|661970|13%|
+|7|CHEM|135813|29%|536262|10%|
+|8|PROC|70094|15%|1162085|23%|
+|9|GEOG|7101|2%|79592|2%|
+|10|DISO|90883|19%|1370653|27%|
+||Total|468402|100%|5152543|100%|
+
 * Average Error
 
 Percentage of errors over the test set
 
-|Classifier|Folds|Error rate EMEA|Error rate Medline|
+|Classifier|Folds|Error rate *EMEA*|Error rate *Medline*|
+|Constant fit (theoretic)||71%|73%|
 |VeryVeryNaiveBayes|10|58.7%|63.8%|
+
+Theoretic contant fit - always predict the most numerous class.
