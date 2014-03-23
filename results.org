@@ -1,0 +1,6 @@
+# Average Error
+
+Percentage of errors over the test set
+
+|Classifier|Folds|Error rate|
+|VeryVeryNaiveBayes|10|58.7%|
