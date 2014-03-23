@@ -11,17 +11,28 @@ from sklearn import cross_validation
 
 annotations = data.load_data(sys.argv[1])
 
-def get_error_rate(classifier_class, annotations, nfolds=10):
-  sumcostAvg=0
-  folds = cross_validation.KFold(len(annotations),n_folds=nfolds)
+class CountPrinter:
+  def __init__(self, total):
+    self.total = total
+    self.current = 0
+
+  def count(self):
+    print '%s/%s' % (self.current, self.total)
+    self.current += 1
+
+def get_error_rate(classifier_class, annotations, n_folds=10, verbose=False):
+  folds = cross_validation.KFold(len(annotations), n_folds=n_folds)
   classifier = classifier_class()
 
   annotations = np.array(annotations)
 
+  counter = CountPrinter(n_folds)
   fold_errors = []
   for train_indices, test_indices in folds:
+    if verbose: counter.count()
+
     classifier.train(annotations[train_indices])
-    predictions=classifier.predict(annotations[test_indices])
+    predictions = classifier.predict(annotations[test_indices])
 
     errors = [int(annotations[test_index].get_group_number() != prediction) 
      for test_index, prediction in zip(test_indices, predictions)]
@@ -30,4 +41,4 @@ def get_error_rate(classifier_class, annotations, nfolds=10):
 
   return np.mean(fold_errors)
 
-print get_error_rate(models.VeryVeryNaiveBayes, annotations)
+print get_error_rate(models.VeryVeryNaiveBayes, annotations, 10, True)
