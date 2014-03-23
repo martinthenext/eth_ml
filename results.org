@@ -1,10 +1,12 @@
-# Non-ambiguous annotations
+* Non-ambiguous annotations
+
+Training the classifier on non-ambiguous annotations:
 
 |Corpus|Number of annotations|
 |EMEA|468402|
 |Medline|5152543|
 
-# Average Error
+* Average Error
 
 Percentage of errors over the test set
 
