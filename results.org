@@ -1,6 +1,12 @@
+# Non-ambiguous annotations
+
+|Corpus|Number of annotations|
+|EMEA|468402|
+|Medline|5152543|
+
 # Average Error
 
 Percentage of errors over the test set
 
-|Classifier|Folds|Error rate|
-|VeryVeryNaiveBayes|10|58.7%|
+|Classifier|Folds|Error rate EMEA|Error rate Medline|
+|VeryVeryNaiveBayes|10|58.7%|63.8%|
