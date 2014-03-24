@@ -7,23 +7,32 @@ import codecs
 import itertools
 from collections import Counter
 
+''' Annotation container class. Supply kwargs to initialize class fields by name
+'''
 class Annotation(object):
-  def __init__(self, e_element, unit_text):
+  def __init__(self, e_element=None, unittext=None, **kwargs):
     self.__slots__ = ['len', 'offset', 'grp', 'text', 'unit_text']
 
-    self.len = e_element.attrib['len']
-    self.offset = e_element.attrib['offset']
-    self.grp = e_element.attrib['grp']
-    self.text = e_element.text.lower()
+    # initialization from kwargs
+    if kwargs:
+      for attrname in self.__slots__:
+        setattr(self, attrname, kwargs.get(attrname, None))
+    # initialization from an xml node
+    else:
+      self.len = e_element.attrib['len']
+      self.offset = e_element.attrib['offset']
+      self.grp = e_element.attrib['grp']
+      self.text = e_element.text.lower()
 
-    self.unit_text = unit_text 
+      self.unit_text = unittext 
 
   # for testing ambiguity
   def __hash__(self):
     return hash((self.len, self.offset, self.text))
 
   def __unicode__(self):
-    return '\t'.join(getattr(self, field) for field in self.__slots__)
+    to_string = lambda x: str(x) if x is not None else '' 
+    return u'\t'.join(to_string(getattr(self, field)) for field in self.__slots__)
 
   GROUP_NAMES = [
     'ACTI', 'ANAT', 'CHEM', 'DEVI',
