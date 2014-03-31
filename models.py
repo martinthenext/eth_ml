@@ -40,3 +40,41 @@ class VeryVeryNaiveBayes(AnnotationClassifier):
   def __init__(self):
     self.classifier = MultinomialNB()
     self.vectorizer = FullContextVectorizer()
+
+class ContextRestrictedBagOfWords(object):
+  def __init__(self, window_size):
+    self.vectorizer = CountVectorizer()
+    self.window_size = window_size
+
+  ''' On the withdrawal of the marketing [[application]] for Advexin
+      -> ([u'of', u'the', u'marketing'], [u'for', u'Advexin'])
+  '''
+  def get_restricted_context(self, annotation):
+    context_left, _, context_right = annotation.get_slices()
+    words_left = context_left.strip().split(u" ")
+    words_right = context_right.strip().split(u" ")
+
+    return (words_left[-self.window_size:], words_right[:self.window_size])
+
+  ''' On the withdrawal of the marketing [[application]] for Advexin
+      -> of the marketing for Advexin
+  '''
+  def get_restricted_context_str(self, annotation):
+    strings = map(lambda l: " ".join(l), self.get_restricted_context(annotation))
+    return "%s %s" % tuple(strings)
+
+  def fit_transform(self, annotations):
+    context_strings = [self.get_restricted_context_str(annotation)
+     for annotation in annotations]
+    return self.vectorizer.fit_transform(context_strings)
+
+  def transform(self, annotations):
+    context_strings = [self.get_restricted_context_str(annotation)
+     for annotation in annotations]
+    return self.vectorizer.transform(context_strings)
+
+class NaiveBayesContextRestricted(AnnotationClassifier):
+  def __init__(self, **kwargs):
+    self.classifier = MultinomialNB()
+    window_size = kwargs.get('window_size', 3)
+    self.vectorizer = ContextRestrictedBagOfWords(window_size)

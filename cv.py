@@ -20,9 +20,9 @@ class CountPrinter:
     print '%s/%s' % (self.current, self.total)
     self.current += 1
 
-def get_error_rate(classifier_class, annotations, n_folds=10, verbose=False):
+def get_error_rate(classifier_class, annotations, n_folds=10, verbose=False, **kwargs):
   folds = cross_validation.KFold(len(annotations), n_folds=n_folds)
-  classifier = classifier_class()
+  classifier = classifier_class(**kwargs)
 
   annotations = np.array(annotations)
 
@@ -41,4 +41,4 @@ def get_error_rate(classifier_class, annotations, n_folds=10, verbose=False):
 
   return np.mean(fold_errors)
 
-print get_error_rate(models.VeryVeryNaiveBayes, annotations, 10, True)
+print get_error_rate(models.NaiveBayesContextRestricted, annotations, 10, True, window_size=3)
