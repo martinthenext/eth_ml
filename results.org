@@ -28,7 +28,10 @@ Percentage of errors over the test set
 |Classifier|CV folds|Error rate *EMEA*|Error rate *Medline*|
 |Constant fit (theoretic)||71%|73%|
 |VeryVeryNaiveBayes|10|58.7%|63.8%|
-|NaiveBayesContextRestricted(window size=3)|10|45.0%|57.5%|
+|NaiveBayesContextRestricted (window size=4)|10|47.0%||
+|NaiveBayesContextRestricted (window size=3)|10|45.0%|57.5%|
+|NaiveBayesContextRestricted (window size=2)|10|43.7%|57.2%|
+|NaiveBayesContextRestricted (window size=1)|10|49.0%|55.4%|
 
 Theoretic contant fit - always predict the most numerous class.
 
