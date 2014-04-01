@@ -21,21 +21,25 @@ Training the classifier on non-ambiguous annotations:
 |10|DISO|90883|19%|1370653|27%|
 ||Total|468402|100%|5152543|100%|
 
-* Average Error
+* Classifiers
+
+** Error rates
 
 Percentage of errors over the test set
 
 |Classifier|CV folds|Error rate *EMEA*|Error rate *Medline*|
 |Constant fit (theoretic)||71%|73%|
 |VeryVeryNaiveBayes|10|58.7%|63.8%|
-|NaiveBayesContextRestricted (window size=4)|10|47.0%||
+|NaiveBayesContextRestricted (window size=4)|10|47.0%|59.0%|
 |NaiveBayesContextRestricted (window size=3)|10|45.0%|57.5%|
 |NaiveBayesContextRestricted (window size=2)|10|43.7%|57.2%|
 |NaiveBayesContextRestricted (window size=1)|10|49.0%|55.4%|
 
 Theoretic contant fit - always predict the most numerous class.
 
-* Agreement with MTurk
+* Agreement MTurk vs. Classifier
+
+** VeryVeryNaiveBayes
 
 Data from Mechanical Turk was imported: annotations with agreement larger than a threshold were considered. Classifiers were trained on EMEA and Medline to predict groups of these annotations. Below are percentages of annotations for which labels predicted by MTurk and classifiers match.
 
@@ -48,3 +52,14 @@ Data from Mechanical Turk was imported: annotations with agreement larger than a
 |99%|48|||
 
 The result with the largest agreement was analyzed by hand, see [[http://davtyan.org/pml/mturk-vs-classifier-0.75-emea.xlsx][the annotated table]]. Subjectively, in conflicts MTurk is mostly right and the classifier is mostly wrong. The classifier should be tweaked to increase the agreement.
+
+* Agreement MTurk vs. Expert
+
+About 200 instances were hand-annotated by an expert and compared with MTurk votes. The comparison table can be downloaded [[http://davtyan.org/pml/mturk_expert_comparison.xlsx][here]]. In the table, result `NONE` for Mechanical Turk means eigher `None of the above` or `I don't know` replies.
+
+|Cases|Agreement|
+|All cases|61%|
+|Where MTurk majority vote is meaningful|76%|
+|Where both votes are meaningful|81%|
+
+By meaningful vote here we mean not `None of the above` and not `I don't know`.
