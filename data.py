@@ -21,7 +21,7 @@ class Annotation(object):
     else:
       self.len = e_element.attrib['len']
       self.offset = e_element.attrib['offset']
-      self.grp = e_element.attrib['grp']
+      self.grp = e_element.attrib['grp'] # if multiple groups, separated by |
       self.text = e_element.text.lower()
 
       self.unit_text = unittext 
@@ -62,6 +62,10 @@ class Annotation(object):
   def get_context_string(self):
     context_before, _, context_after = self.get_slices()
     return context_before + context_after
+
+  def get_ambiguous_groups(self):
+    groups = self.grp.split('|')
+    return groups if len(groups) != 1 else None
 
 def load_data(ssc_file_name):
   # loading XMLs
