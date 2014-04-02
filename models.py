@@ -7,6 +7,9 @@
 import numpy
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.linear_model import LogisticRegression
+
+from data import Annotation
 
 ''' Wrapper aroung sklearn to vectorize Annotation objects
 '''
@@ -78,3 +81,18 @@ class NaiveBayesContextRestricted(AnnotationClassifier):
     self.classifier = MultinomialNB()
     window_size = kwargs.get('window_size', 3)
     self.vectorizer = ContextRestrictedBagOfWords(window_size)
+
+''' 10 logistic regressions - one per get_group
+    for every instance determine the probability of allowed groups
+    (options for ambiguous term) and choose the one with highest probability
+'''
+class OptionAwareLogisticRegression(AnnotationClassifier):
+  def __init__(self):
+    self.classifiers = dict( (group, LogisticRegression())
+     for group in Annotation.GROUP_NAMES)
+
+  def train(self, annotations):
+    raise NotImplementedError
+
+  def predict(self, annotations):
+    pass
