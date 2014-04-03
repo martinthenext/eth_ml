@@ -9,7 +9,7 @@ import numpy as np
 
 from sklearn import cross_validation
 
-annotations = data.load_data(sys.argv[1])
+annotations = data.load_unambiguous_annotations(sys.argv[1])
 
 class CountPrinter:
   def __init__(self, total):

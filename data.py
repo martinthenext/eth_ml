@@ -6,6 +6,7 @@ import sys
 import codecs
 import itertools
 from collections import Counter
+import re
 
 ''' Annotation container class. Supply kwargs to initialize class fields by name
 '''
@@ -67,7 +68,10 @@ class Annotation(object):
     groups = self.grp.split('|')
     return groups if len(groups) != 1 else None
 
-def load_data(ssc_file_name):
+
+''' Load unambiguous annotations from Silver Standard Corpus
+'''
+def load_unambiguous_annotations(ssc_file_name):
   # loading XMLs
   parser = etree.XMLParser(encoding='utf-8')
   ssc = etree.parse(ssc_file_name, parser).getroot()
@@ -89,3 +93,27 @@ def load_data(ssc_file_name):
       global_annotations += annotations
 
   return global_annotations
+
+''' Load ambiguous annotations from a csv file produced by 
+    https://kitt.cl.uzh.ch/kitt/mantracrowd/disambig/vote_results.csv?AgreementThr=0.6
+
+    annotations are labeled with answers: e.g. from MTurk or expert
+
+    first line of file should be an excel-like separator instruction, e.g. "sep=\t"
+'''
+
+def load_ambiguous_annotations_labeled(csv_file_name):
+  annotations = []
+  labels = []
+
+  with codecs.open(csv_file_name, 'r', 'utf-8') as f:
+    separator_line = f.readline()
+    sep = re.match("sep=(.)", separator_line).group(1)
+
+    for line in f:
+      length, offset, groups, text, unit_text, vote, _ = line[:-1].split(sep)
+
+      annotations.append(Annotation(len=int(length), offset=int(offset), grp=groups, text=text, unit_text=unit_text))
+      labels.append(vote)
+
+  return (annotations, labels)

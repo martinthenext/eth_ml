@@ -4,39 +4,30 @@
     and observe the agreement between the classifier and turkers
 
     ARGUMENT 1: SSC xml file to extract non-ambiguous annotations from
-    ARGUMENT 2: CSV file of Mturk majority vote annotations
+    ARGUMENT 2: CSV file of Mturk majority vote annotations as produced by 
+      https://kitt.cl.uzh.ch/kitt/mantracrowd/disambig/vote_results.csv?AgreementThr=0.6
 '''
 
 import sys
 import codecs
-from data import load_data, Annotation
+import data 
 from models import VeryVeryNaiveBayes
 import numpy as np
 
-sys.stdout = codecs.getwriter('utf-8')(sys.__stdout__)
+def get_mturk_classifier_agreement(classifier_class, ssc_file_path, mturk_vote_file_path):
+  # train a classifier on unambiguous annotations
+  unambig_annotations = data.load_unambiguous_annotations(ssc_file_path)
+  classifier = classifier_class()
+  classifier.train(unambig_annotations)
 
+  # read mturk annotations 
+  mturk_annotations, labels = data.load_ambiguous_annotations_labeled(mturk_vote_file_path)
 
-# train a classifier on non-ambiguous annotations
+  # classify annotations and output the agreement
+  predicted_group_numbers = classifier.predict(mturk_annotations)
+  voted_group_numbers = [data.Annotation.GROUP_MAPPING[label] for label in labels]
+  agreement = [int(predicted == voted) for predicted, voted in zip(predicted_group_numbers, voted_group_numbers)]
 
-nonambig_annotations = load_data(sys.argv[1])
-classifier = VeryVeryNaiveBayes()
-classifier.train(nonambig_annotations)
+  return np.mean(agreement)
 
-# read mturk annotations 
-mturk_annotations = []
-with codecs.open(sys.argv[2], 'r', 'utf-8') as f:
-  for line in f:
-    params = dict(zip(['len', 'offset', 'text', 'unit_text', 'grp'], line[:-1].split('|')))
-    mturk_annotations.append(Annotation(**params))
-
-# classify annotations and output the agreement
-predicted_group_numbers = classifier.predict(mturk_annotations)
-voted_group_numbers = [annotation.get_group_number() for annotation in mturk_annotations]
-agreement = [int(predicted == voted) for predicted, voted in zip(predicted_group_numbers, voted_group_numbers)]
-
-sys.stdout.write('sep=|\n')
-sys.stdout.write(str(np.mean(agreement)) + '\n')
-sys.stdout.write('MTURK ANSWER|TASK|CLASSIFIER ANSWER\n')
-
-for mturk_annotation, predicted in zip(mturk_annotations, predicted_group_numbers):
-  sys.stdout.write('%s|%s|%s\n' % (mturk_annotation.grp, mturk_annotation.get_highlighted_repr(), Annotation.GROUP_NAMES[predicted]) )
+print get_mturk_classifier_agreement(VeryVeryNaiveBayes, sys.argv[1], sys.argv[2])
