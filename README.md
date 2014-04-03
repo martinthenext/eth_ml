@@ -42,3 +42,7 @@ Labeled data:
 3. Use (adaptive) submodularity to implement pool-based active learning. Analyze classifier performance.
 4. Conditional: Implement batch-mode version of the algorithm
 5. Conditional: Switch from simulation to querying actual MTurk workers. Analyze classifier performance.
+
+## Results
+
+See the constantly updated [summary of results](results.org).
