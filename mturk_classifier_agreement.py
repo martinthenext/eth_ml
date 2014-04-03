@@ -11,13 +11,13 @@
 import sys
 import codecs
 import data 
-from models import VeryVeryNaiveBayes
+import models
 import numpy as np
 
-def get_mturk_classifier_agreement(classifier_class, ssc_file_path, mturk_vote_file_path):
+def get_mturk_classifier_agreement(ssc_file_path, mturk_vote_file_path, classifier_class, **kwargs):
   # train a classifier on unambiguous annotations
   unambig_annotations = data.load_unambiguous_annotations(ssc_file_path)
-  classifier = classifier_class()
+  classifier = classifier_class(**kwargs)
   classifier.train(unambig_annotations)
 
   # read mturk annotations 
@@ -30,4 +30,4 @@ def get_mturk_classifier_agreement(classifier_class, ssc_file_path, mturk_vote_f
 
   return np.mean(agreement)
 
-print get_mturk_classifier_agreement(VeryVeryNaiveBayes, sys.argv[1], sys.argv[2])
+print get_mturk_classifier_agreement(sys.argv[1], sys.argv[2], models.NaiveBayesContextRestricted, window_size=2)

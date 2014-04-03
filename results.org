@@ -53,6 +53,12 @@ Data from Mechanical Turk was imported: annotations with agreement larger than a
 
 The result with the largest agreement was analyzed by hand, see [[http://davtyan.org/pml/mturk-vs-classifier-0.75-emea.xlsx][the annotated table]]. Subjectively, in conflicts MTurk is mostly right and the classifier is mostly wrong. The classifier should be tweaked to increase the agreement.
 
+** NaiveBayesContextRestricted
+
+|Vote agreement threshold|Classifier trained on *EMEA*|Classifier trained on *Medline*|Window size|
+|60%|23.7%|26.0%|2|
+|75%|28.6%||2|
+
 * Agreement MTurk vs. Expert
 
 About 200 instances were hand-annotated by an expert and compared with MTurk votes. The comparison table can be downloaded [[http://davtyan.org/pml/mturk_expert_comparison.xlsx][here]]. In the table, result `NONE` for Mechanical Turk means eigher `None of the above` or `I don't know` replies.
