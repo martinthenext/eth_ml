@@ -61,6 +61,14 @@ The result with the largest agreement was analyzed by hand, see [[http://davtyan
 |75%|16.3%||1|
 |75%|28.6%|32.6%|2|
 
+** OptionAwareLogisticRegression
+
+|Vote agreement threshold|Classifier trained on *EMEA*|Classifier trained on *Medline*|Window size|
+|75%|46.9%||3|
+|75%|46.9%||2|
+|75%|46.9%||1|
+
+
 * Agreement MTurk vs. Expert
 
 About 200 instances were hand-annotated by an expert and compared with MTurk votes. The comparison table can be downloaded [[http://davtyan.org/pml/mturk_expert_comparison.xlsx][here]]. In the table, result `NONE` for Mechanical Turk means eigher `None of the above` or `I don't know` replies.

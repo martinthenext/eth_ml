@@ -30,5 +30,4 @@ def get_mturk_classifier_agreement(ssc_file_path, mturk_vote_file_path, classifi
 
   return np.mean(agreement)
 
-#print get_mturk_classifier_agreement(sys.argv[1], sys.argv[2], models.NaiveBayesContextRestricted, window_size=2)
-print get_mturk_classifier_agreement(sys.argv[1], sys.argv[2], models.OptionAwareLogisticRegression, window_size=2)
+print get_mturk_classifier_agreement(sys.argv[1], sys.argv[2], models.OptionAwareLogisticRegression, window_size=1)

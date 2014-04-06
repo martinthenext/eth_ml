@@ -92,14 +92,15 @@ class OptionAwareLogisticRegression(AnnotationClassifier):
   def __init__(self, **kwargs):
     self.classifiers = dict( (group, LogisticRegression())
      for group in Annotation.GROUP_NAMES)
-    window_size = kwargs.get('window_size',3)
+    window_size = kwargs.get('window_size', 3)
+    print window_size
     self.vectorizer = ContextRestrictedBagOfWords(window_size)
 
   def train(self, annotations):
     X = self.vectorizer.fit_transform(annotations)
 
     for groupindex in Annotation.GROUP_NAMES:
-      current_group = Annotation.GROUP_MAPPING[groupindex];
+      current_group = Annotation.GROUP_MAPPING[groupindex]
       ylabels = numpy.array(map(lambda x: int(x.get_group_number() == current_group), annotations))
       self.classifiers[groupindex].fit(X, ylabels)
 

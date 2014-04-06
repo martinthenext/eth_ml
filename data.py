@@ -36,10 +36,10 @@ class Annotation(object):
     return u'\t'.join(to_string(getattr(self, field)) for field in self.__slots__)
 
   GROUP_NAMES = [
-    'ACTI', 'ANAT', 'CHEM', 'DEVI',
-    'DISO', 'GENE', 'GEOG', 'LIVB', 
-    'OCCU', 'ORGA', 'PHYS', 'PROC',
-    'PHEN', 'OBJC'
+    'ANAT', 'CHEM', 'DEVI',
+    'DISO', 'GEOG', 'LIVB', 
+    'PHYS', 'PROC', 'PHEN', 
+    'OBJC'
   ]
 
   GROUP_MAPPING = dict((y, x) for (x, y) in enumerate(GROUP_NAMES))
