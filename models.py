@@ -88,19 +88,17 @@ class NaiveBayesContextRestricted(AnnotationClassifier):
 '''
 
 class OptionAwareLogisticRegression(AnnotationClassifier):
-  GROUP_NAMES_LIES = ['PROC','CHEM']
 
   def __init__(self, **kwargs):
     self.classifiers = dict( (group, LogisticRegression())
-     for group in self.GROUP_NAMES_LIES)
-#    self.vectorizer = FullContextVectorizer()
+     for group in Annotation.GROUP_NAMES)
     window_size = kwargs.get('window_size',3)
     self.vectorizer = ContextRestrictedBagOfWords(window_size)
 
   def train(self, annotations):
     X = self.vectorizer.fit_transform(annotations)
 
-    for groupindex in self.GROUP_NAMES_LIES:
+    for groupindex in Annotation.GROUP_NAMES:
       current_group = Annotation.GROUP_MAPPING[groupindex];
       ylabels = numpy.array(map(lambda x: int(x.get_group_number() == current_group), annotations))
       self.classifiers[groupindex].fit(X, ylabels)
@@ -109,8 +107,8 @@ class OptionAwareLogisticRegression(AnnotationClassifier):
     X = self.vectorizer.transform(annotations)
     predictions=[]
     for index in range(len(annotations)):
-      probabilities_all_groups = numpy.array(map(lambda group: self.classifiers['CHEM'].predict_proba(X[index]),numpy.array(annotations[index].get_ambiguous_groups())))
+      probabilities_all_groups = numpy.array(map(lambda group: self.classifiers[str(group)].predict_proba(X[index]),numpy.array(annotations[index].get_ambiguous_groups())))
       groups_probabilities = zip(annotations[index].get_ambiguous_groups(),probabilities_all_groups)
       max_probability = max(groups_probabilities)
-      predictions.append(str(max_probability[0])) # Not completely sure if this is retrieving the correct maximum because they are all the same :(
+      predictions.append(Annotation.GROUP_MAPPING[str(max_probability[0])])
     return predictions
