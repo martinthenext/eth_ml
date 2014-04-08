@@ -4,6 +4,7 @@
     sklearn objects that classify and vectorize annotations
 '''
 
+import random
 import numpy
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
@@ -103,7 +104,6 @@ class OptionAwareLogisticRegression(AnnotationClassifier):
     self.classifiers = dict( (group, LogisticRegression())
      for group in Annotation.GROUP_NAMES)
     window_size = kwargs.get('window_size', 3)
-    print window_size
     self.vectorizer = ContextRestrictedBagOfWords(window_size)
 
   def train(self, annotations):
@@ -123,3 +123,16 @@ class OptionAwareLogisticRegression(AnnotationClassifier):
       max_probability = max(groups_probabilities)
       predictions.append(Annotation.GROUP_MAPPING[str(max_probability[0])])
     return predictions
+
+''' Randomly pick one option for group
+'''
+class OptionAwareRandom(AnnotationClassifier):
+  def train(self, annotations):
+    pass
+
+  def get_random_group_code(self, annotation):
+    group = random.choice(annotation.get_ambiguous_groups())
+    return Annotation.GROUP_MAPPING[group]
+
+  def predict(self, annotations):
+    return [self.get_random_group_code(annotation) for annotation in annotations]

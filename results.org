@@ -34,6 +34,7 @@ Percentage of errors over the test set
 |NaiveBayesContextRestricted (window size=3)|10|45.0%|57.5%|
 |NaiveBayesContextRestricted (window size=2)|10|43.7%|57.2%|
 |NaiveBayesContextRestricted (window size=1)|10|49.0%|55.4%|
+|NaiveBayesContexRestrictedBigrams(window size=2)|10|58.4%|65.8%|
 
 Theoretic contant fit - always predict the most numerous class.
 
@@ -61,13 +62,20 @@ The result with the largest agreement was analyzed by hand, see [[http://davtyan
 |75%|16.3%||1|
 |75%|28.6%|32.6%|2|
 
+** OptionAwareRandom
+
+This is to provide a baseline for agreement for classifiers which decide between possible groups only.
+
+|Vote agreement threshold|Classifier trained on *EMEA*|Classifier trained on *Medline*|
+|60%|47.4%|39.6%|
+|75%|36.7%|61.2%|
+
 ** OptionAwareLogisticRegression
 
 |Vote agreement threshold|Classifier trained on *EMEA*|Classifier trained on *Medline*|Window size|
 |75%|46.9%||3|
 |75%|46.9%||2|
 |75%|46.9%||1|
-
 
 * Agreement MTurk vs. Expert
 
