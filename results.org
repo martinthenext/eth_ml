@@ -76,6 +76,7 @@ This is to provide a baseline for agreement for classifiers which decide between
 |75%|46.9%||3|
 |75%|46.9%||2|
 |75%|46.9%||1|
+|60%|46.9%||2|
 
 * Agreement MTurk vs. Expert
 
