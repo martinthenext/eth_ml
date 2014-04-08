@@ -85,14 +85,18 @@ class NaiveBayesContextRestricted(AnnotationClassifier):
   def __init__(self, **kwargs):
     self.classifier = MultinomialNB()
     window_size = kwargs.get('window_size', 3)
+    self.vectorizer = ContextRestrictedBagOfWords(window_size)
+
+class NaiveBayesContexRestrictedBigrams(AnnotationClassifier):
+  def __init__(self, **kwargs):
+    self.classifier = MultinomialNB()
+    window_size = kwargs.get('window_size', 3)
     self.vectorizer = ContextRestrictedBagOfBigrams(window_size)
-    #self.vectorizer = ContextRestrictedBagOfWords(window_size)
 
 ''' 10 logistic regressions - one per get_group
     for every instance determine the probability of allowed groups
     (options for ambiguous term) and choose the one with highest probability
 '''
-
 class OptionAwareLogisticRegression(AnnotationClassifier):
 
   def __init__(self, **kwargs):
