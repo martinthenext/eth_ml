@@ -64,11 +64,11 @@ The result with the largest agreement was analyzed by hand, see [[http://davtyan
 
 ** OptionAwareRandom
 
-This is to provide a baseline for agreement for classifiers which decide between possible groups only.
+This is to provide a baseline for agreement for classifiers which decide between possible groups only. As the variability of classifier results is very high, the agreement levels are respresented with confidence intervals retreived by 1000 simulations each.
 
 |Vote agreement threshold|Classifier trained on *EMEA*|Classifier trained on *Medline*|
-|60%|47.4%|39.6%|
-|75%|36.7%|61.2%|
+|60%|48.6% += 2 * 3.6%|48.6% +- 2 * 3.9%|
+|75%|49.1% += 2 * 7.2% |48.8% +- 2 * 7.1%|
 
 ** OptionAwareLogisticRegression
 
