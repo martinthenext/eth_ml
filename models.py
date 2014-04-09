@@ -6,6 +6,7 @@
 
 import random
 import numpy
+from scipy import sparse
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
@@ -77,6 +78,36 @@ class ContextRestrictedBagOfWords(object):
      for annotation in annotations]
     return self.vectorizer.transform(context_strings)
 
+
+class ContextRestrictedBagOfWordsLeftRight(ContextRestrictedBagOfWords):
+  def get_restricted_context_str_left(self, annotation):
+    strings = map(lambda l: " ".join(l), self.get_restricted_context(annotation))
+    return strings[0]
+
+  def get_restricted_context_str_right(self, annotation):
+    strings = map(lambda l: " ".join(l), self.get_restricted_context(annotation))
+    return strings[1]
+
+  def fit_transform(self, annotations):
+    context_strings = [self.get_restricted_context_str(annotation)
+     for annotation in annotations]
+    self.vectorizer.fit_transform(context_strings)
+    context_strings_left = [self.get_restricted_context_str_left(annotation)
+     for annotation in annotations]
+    context_strings_right = [self.get_restricted_context_str_right(annotation)
+     for annotation in annotations]
+    return sparse.hstack( (self.vectorizer.transform(context_strings_left),
+      self.vectorizer.transform(context_strings_right)) )
+
+  def transform(self, annotations):
+    context_strings_left = [self.get_restricted_context_str_left(annotation)
+     for annotation in annotations]
+    context_strings_right = [self.get_restricted_context_str_right(annotation)
+     for annotation in annotations]
+    return sparse.hstack( (self.vectorizer.transform(context_strings_left),
+      self.vectorizer.transform(context_strings_right) ))
+
+
 class ContextRestrictedBagOfBigrams(ContextRestrictedBagOfWords):
   def __init__(self, window_size):
     self.vectorizer = CountVectorizer(analyzer='char', ngram_range=(2,2))
@@ -87,6 +118,12 @@ class NaiveBayesContextRestricted(AnnotationClassifier):
     self.classifier = MultinomialNB()
     window_size = kwargs.get('window_size', 3)
     self.vectorizer = ContextRestrictedBagOfWords(window_size)
+
+class NaiveBayesContextRestrictedLeftRight(AnnotationClassifier):
+  def __init__(self, **kwargs):
+    self.classifier = MultinomialNB()
+    window_size = kwargs.get('window_size', 3)
+    self.vectorizer = ContextRestrictedBagOfWordsLeftRight(window_size)
 
 class NaiveBayesContexRestrictedBigrams(AnnotationClassifier):
   def __init__(self, **kwargs):
