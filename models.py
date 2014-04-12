@@ -6,6 +6,7 @@
 
 import random
 import numpy
+import operator
 from scipy import sparse
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
@@ -157,7 +158,7 @@ class OptionAwareLogisticRegression(AnnotationClassifier):
     for index in range(len(annotations)):
       probabilities_all_groups = numpy.array(map(lambda group: self.classifiers[str(group)].predict_proba(X[index]),numpy.array(annotations[index].get_ambiguous_groups())))
       groups_probabilities = zip(annotations[index].get_ambiguous_groups(),probabilities_all_groups)
-      max_probability = max(groups_probabilities)
+      max_probability = max(groups_probabilities, key=lambda x:x[1][0][1])
       predictions.append(Annotation.GROUP_MAPPING[str(max_probability[0])])
     return predictions
 
