@@ -44,8 +44,14 @@ class Annotation(object):
 
   GROUP_MAPPING = dict((y, x) for (x, y) in enumerate(GROUP_NAMES))
 
+  ''' Get a group number if there is only one or a list if a plenty
+  '''
   def get_group_number(self):
-    return self.GROUP_MAPPING[self.grp]
+    ambig_groups = self.get_ambiguous_groups()
+    if ambig_groups:
+      return [self.GROUP_MAPPING[grp] for grp in ambig_groups]
+    else:
+      return self.GROUP_MAPPING[self.grp]
 
   def get_slices(self):
     begin_highlight = int(self.offset)
