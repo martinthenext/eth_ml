@@ -11,6 +11,7 @@ from scipy import sparse
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
+import itertools
 
 from data import Annotation
 
@@ -174,3 +175,16 @@ class OptionAwareRandom(AnnotationClassifier):
 
   def predict(self, annotations):
     return [self.get_random_group_code(annotation) for annotation in annotations]
+
+class OptionAwareNaiveBayes(NaiveBayesContextRestricted):
+  def get_group_number(self, annotation, prob_vector):
+    group_option_indices = annotation.get_group_number()
+    group_option_prob = [prob_vector[group_option_index] for group_option_index in group_option_indices]
+    group_index, _ = max(zip(group_option_indices, group_option_prob), key = lambda (index, prob): prob)
+    return group_index
+
+  def predict(self, annotations):
+    X = self.vectorizer.transform(annotations)
+    probs = self.classifier.predict_proba(X) #[n_samples, n_classes]
+    return numpy.array([self.get_group_number(annotation, row)
+     for row, annotation in itertools.izip(probs, annotations)])

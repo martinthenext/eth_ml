@@ -78,6 +78,16 @@ This is to provide a baseline for agreement for classifiers which decide between
 |75%|46.9%||1|
 |60%|46.9%||2|
 
+** OptionAwareNaiveBayes
+
+Same as NaiveBayesContextRestricted, but aware of options.
+
+|Vote agreement threshold|Classifier trained on *EMEA*|Classifier trained on *Medline*|Window size|
+|60%|53.2%||2|
+|60%|54.8%||3|
+|75%|59.2%|63.3%|3|
+|75%|51.0%|48.9%|2|
+
 * Agreement MTurk vs. Expert
 
 About 200 instances were hand-annotated by an expert and compared with MTurk votes. The comparison table can be downloaded [[http://davtyan.org/pml/mturk_expert_comparison.xlsx][here]]. In the table, result `NONE` for Mechanical Turk means eigher `None of the above` or `I don't know` replies.
