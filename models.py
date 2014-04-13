@@ -112,7 +112,7 @@ class ContextRestrictedBagOfWordsLeftRight(ContextRestrictedBagOfWords):
 
 class ContextRestrictedBagOfBigrams(ContextRestrictedBagOfWords):
   def __init__(self, window_size):
-    self.vectorizer = CountVectorizer(analyzer='char', ngram_range=(2,2))
+    self.vectorizer = CountVectorizer(analyzer='char', ngram_range=(1,2))
     self.window_size = window_size
 
 class NaiveBayesContextRestricted(AnnotationClassifier):
@@ -188,3 +188,15 @@ class OptionAwareNaiveBayes(NaiveBayesContextRestricted):
     probs = self.classifier.predict_proba(X) #[n_samples, n_classes]
     return numpy.array([self.get_group_number(annotation, row)
      for row, annotation in itertools.izip(probs, annotations)])
+
+class OptionAwareNaiveBayesLeftRight(OptionAwareNaiveBayes):
+  def __init__(self, **kwargs):
+    self.classifier = MultinomialNB()
+    window_size = kwargs.get('window_size', 3)
+    self.vectorizer = ContextRestrictedBagOfWordsLeftRight(window_size)
+    
+class OptionAwareNaiveBayesBigrams(OptionAwareNaiveBayes):
+  def __init__(self, **kwargs):
+    self.classifier = MultinomialNB()
+    window_size = kwargs.get('window_size', 8)
+    self.vectorizer = ContextRestrictedBagOfBigrams(window_size)
