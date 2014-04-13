@@ -101,6 +101,7 @@ Same as =OptionAwareNaiveBayes= but with different left and right contexts.
 Switched from just bigrams to unigrams and bigrams. 
 
 |Vote agreement threshold|Classifier trained on *EMEA*|Classifier trained on *Medline*|Window size|
+|75%|51.0%|59.2%|16|
 |75%|51.0%|59.2%|10|
 |75%|46.9%|59.2%|4|
 
