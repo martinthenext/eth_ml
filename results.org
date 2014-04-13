@@ -73,7 +73,7 @@ This is to provide a baseline for agreement for classifiers which decide between
 ** OptionAwareLogisticRegression
 
 |Vote agreement threshold|Classifier trained on *EMEA*|Classifier trained on *Medline*|Window size|
-|75%|46.9%||3|
+|75%|46.9%|61.2%|3|
 |75%|46.9%||2|
 |75%|46.9%||1|
 |60%|46.9%||2|
