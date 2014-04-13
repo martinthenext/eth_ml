@@ -102,14 +102,15 @@ Switched from just bigrams to unigrams and bigrams.
 
 |Vote agreement threshold|Classifier trained on *EMEA*|Classifier trained on *Medline*|Window size|
 |75%|51.0%|59.2%|10|
+|75%|46.9%|59.2%|4|
 
 * Agreement MTurk vs. Expert
 
-About 200 instances were hand-annotated by an expert and compared with MTurk votes. The comparison table can be downloaded [[http://davtyan.org/pml/mturk_expert_comparison.xlsx][here]]. In the table, result `NONE` for Mechanical Turk means eigher `None of the above` or `I don't know` replies.
+About 200 instances were hand-annotated by an expert and compared with MTurk votes. The comparison table can be downloaded [[http://davtyan.org/pml/mturk_expert_comparison.xlsx][here]]. In the table, result =NONE= for Mechanical Turk means eigher =None of the above= or =I don't know= replies.
 
 |Cases|Agreement|
 |All cases|61%|
 |Where MTurk majority vote is meaningful|76%|
 |Where both votes are meaningful|81%|
 
-By meaningful vote here we mean not `None of the above` and not `I don't know`.
+By meaningful vote here we mean not =None of the above= and not =I don't know=.
