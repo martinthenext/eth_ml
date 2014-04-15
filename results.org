@@ -114,7 +114,7 @@ Switched from just bigrams to unigrams and bigrams.
 ** OptionAwareNaiveBayesFullContextLeftRight
 
 |Vote agreement threshold|Classifier trained on *EMEA*|Classifier trained on *Medline*|Window size|
-|75%|61.2%||
+|75%|61.2%|67.3%|
 
 * Agreement MTurk vs. Expert
 
