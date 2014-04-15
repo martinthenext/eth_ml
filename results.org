@@ -70,6 +70,11 @@ This is to provide a baseline for agreement for classifiers which decide between
 |60%|48.6% ± 2 * 3.6%|48.6% ± 2 * 3.9%|
 |75%|49.1% ± 2 * 7.2% |48.8% ± 2 * 7.1%|
 
+** OptionAwareNaiveBayesFullContext
+
+|Vote agreement threshold|Classifier trained on *EMEA*|Classifier trained on *Medline*|
+|75%|57.1%||
+
 ** OptionAwareLogisticRegression
 
 |Vote agreement threshold|Classifier trained on *EMEA*|Classifier trained on *Medline*|Window size|

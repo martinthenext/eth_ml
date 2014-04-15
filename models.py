@@ -200,3 +200,8 @@ class OptionAwareNaiveBayesBigrams(OptionAwareNaiveBayes):
     self.classifier = MultinomialNB()
     window_size = kwargs.get('window_size', 8)
     self.vectorizer = ContextRestrictedBagOfBigrams(window_size)
+
+class OptionAwareNaiveBayesFullContext(OptionAwareNaiveBayes):
+  def __init__(self, **kwargs):
+    self.classifier = MultinomialNB()
+    self.vectorizer = FullContextVectorizer()
