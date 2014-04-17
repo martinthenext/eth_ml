@@ -13,6 +13,18 @@ import codecs
 import data 
 import models
 import numpy as np
+from sklearn.externals import joblib
+
+def get_agreement(classifier, mturk_labeled_data):
+  # read mturk annotations 
+  mturk_annotations, labels = mturk_labeled_data
+
+  # classify annotations and output the agreement
+  predicted_group_numbers = classifier.predict(mturk_annotations)
+  voted_group_numbers = [data.Annotation.GROUP_MAPPING[label] for label in labels]
+  agreement = [int(predicted == voted) for predicted, voted in zip(predicted_group_numbers, voted_group_numbers)]
+
+  return np.mean(agreement) 
 
 def get_mturk_classifier_agreement(ssc_file_path, mturk_vote_file_path, classifier_class, **kwargs):
   # train a classifier on unambiguous annotations
@@ -21,13 +33,13 @@ def get_mturk_classifier_agreement(ssc_file_path, mturk_vote_file_path, classifi
   classifier.train(unambig_annotations)
 
   # read mturk annotations 
-  mturk_annotations, labels = data.load_ambiguous_annotations_labeled(mturk_vote_file_path)
+  mturk_labeled_data = data.load_ambiguous_annotations_labeled(mturk_vote_file_path)
 
-  # classify annotations and output the agreement
-  predicted_group_numbers = classifier.predict(mturk_annotations)
-  voted_group_numbers = [data.Annotation.GROUP_MAPPING[label] for label in labels]
-  agreement = [int(predicted == voted) for predicted, voted in zip(predicted_group_numbers, voted_group_numbers)]
+  return get_agreement(classifier, mturk_labeled_data)
 
-  return np.mean(agreement)
+def get_mturk_pickled_classifier_agreement(classifier_pickle_file, mturk_vote_file_path, classifier_class, **kwargs):
+  classifier = joblib.load(classifier_pickle_file)
+  mturk_labeled_data = data.load_ambiguous_annotations_labeled(mturk_vote_file_path)
+  return get_agreement(classifier, mturk_labeled_data)
 
-print get_mturk_classifier_agreement(sys.argv[1], sys.argv[2], models.OptionAwareLogisticRegression)
+print get_mturk_classifier_agreement(sys.argv[1], sys.argv[2], models.OptionAwareNaiveBayesLeftRight)
