@@ -14,6 +14,7 @@ import data
 import models
 import numpy as np
 from sklearn.externals import joblib
+import argparse
 
 def get_agreement(classifier, mturk_labeled_data):
   # read mturk annotations 
@@ -42,4 +43,16 @@ def get_mturk_pickled_classifier_agreement(classifier_pickle_file, mturk_vote_fi
   mturk_labeled_data = data.load_ambiguous_annotations_labeled(mturk_vote_file_path)
   return get_agreement(classifier, mturk_labeled_data)
 
-print get_mturk_classifier_agreement(sys.argv[1], sys.argv[2], models.OptionAwareNaiveBayesLeftRight)
+parser = argparse.ArgumentParser()
+parser.add_argument("classifier_file_path")
+parser.add_argument("vote_csv_file_path")
+parser.add_argument("--train", help="First file is a SSC corpus file, train a classifier on it instead of deserializing")
+
+args = parser.parse_args()
+
+if args.train:
+  print get_mturk_classifier_agreement(args.classifier_file_path, args.vote_csv_file_path,
+   models.OptionAwareNaiveBayesLeftRight)
+else:
+  print get_mturk_pickled_classifier_agreement(args.classifier_file_path, args.vote_csv_file_path,
+   models.OptionAwareNaiveBayesLeftRight)
