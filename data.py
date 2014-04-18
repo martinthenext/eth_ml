@@ -11,9 +11,9 @@ import re
 ''' Annotation container class. Supply kwargs to initialize class fields by name
 '''
 class Annotation(object):
+  __slots__ = ('len', 'offset', 'grp', 'text', 'unit_text')
+  
   def __init__(self, e_element=None, unittext=None, **kwargs):
-    self.__slots__ = ['len', 'offset', 'grp', 'text', 'unit_text']
-
     # initialization from kwargs
     if kwargs:
       for attrname in self.__slots__:
