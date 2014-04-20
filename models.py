@@ -80,7 +80,6 @@ class ContextRestrictedBagOfWords(object):
      for annotation in annotations]
     return self.vectorizer.transform(context_strings)
 
-
 class ContextRestrictedBagOfWordsLeftRight(ContextRestrictedBagOfWords):
   def get_restricted_context_str_left(self, annotation):
     strings = map(lambda l: " ".join(l), self.get_restricted_context(annotation))
@@ -93,6 +92,7 @@ class ContextRestrictedBagOfWordsLeftRight(ContextRestrictedBagOfWords):
   def fit_transform(self, annotations):
     context_strings = [self.get_restricted_context_str(annotation)
      for annotation in annotations]
+    # TODO should it just be 'fit'?
     self.vectorizer.fit_transform(context_strings)
     context_strings_left = [self.get_restricted_context_str_left(annotation)
      for annotation in annotations]
@@ -108,7 +108,6 @@ class ContextRestrictedBagOfWordsLeftRight(ContextRestrictedBagOfWords):
      for annotation in annotations]
     return sparse.hstack( (self.vectorizer.transform(context_strings_left),
       self.vectorizer.transform(context_strings_right) ))
-
 
 class ContextRestrictedBagOfBigrams(ContextRestrictedBagOfWords):
   def __init__(self, window_size):
@@ -200,3 +199,31 @@ class OptionAwareNaiveBayesBigrams(OptionAwareNaiveBayes):
     self.classifier = MultinomialNB()
     window_size = kwargs.get('window_size', 8)
     self.vectorizer = ContextRestrictedBagOfBigrams(window_size)
+
+class OptionAwareNaiveBayesFullContext(OptionAwareNaiveBayes):
+  def __init__(self, **kwargs):
+    self.classifier = MultinomialNB()
+    self.vectorizer = FullContextVectorizer()
+
+class FullContextBagOfWordsLeftRight(FullContextVectorizer):
+  def get_left_right_full_tuple(self, annotation):
+    left_context, _, right_context = annotation.get_slices()
+    full_context = left_context + right_context
+    return (left_context, right_context, full_context)
+
+  def fit_transform(self, annotations, fit=True):
+    side_tuples = [self.get_left_right_full_tuple(a) for a in annotations]
+    left_contexts, right_contexts, full_contexts = zip(*side_tuples)
+    if fit:
+      self.vectorizer.fit(full_contexts)
+    X_left = self.vectorizer.transform(left_contexts)
+    X_right = self.vectorizer.transform(right_contexts)
+    return sparse.hstack((X_left, X_right))
+
+  def transform(self, annotations):
+    return self.fit_transform(annotations, fit=False)
+
+class OptionAwareNaiveBayesFullContextLeftRight(OptionAwareNaiveBayes):
+  def __init__(self, **kwargs):
+    self.classifier = MultinomialNB()
+    self.vectorizer = FullContextBagOfWordsLeftRight()
