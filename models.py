@@ -93,6 +93,7 @@ class ContextRestrictedBagOfWordsLeftRight(ContextRestrictedBagOfWords):
     context_strings = [self.get_restricted_context_str(annotation)
      for annotation in annotations]
     # TODO should it just be 'fit'?
+    # could be, but we do not need the output, as we do it separately for left and right
     self.vectorizer.fit_transform(context_strings)
     context_strings_left = [self.get_restricted_context_str_left(annotation)
      for annotation in annotations]
@@ -108,6 +109,17 @@ class ContextRestrictedBagOfWordsLeftRight(ContextRestrictedBagOfWords):
      for annotation in annotations]
     return sparse.hstack( (self.vectorizer.transform(context_strings_left),
       self.vectorizer.transform(context_strings_right) ))
+
+class ContextRestrictedBagOfWordsLeftRightCutoff(ContextRestrictedBagOfWordsLeftRight):
+  def __init__(self, window_size, min_df):
+    self.vectorizer = CountVectorizer(min_df=min_df)
+    self.window_size = window_size
+    self.min_df = min_df
+
+class ContextRestrictedBagOfWordsLeftRightStopWords(ContextRestrictedBagOfWordsLeftRight):
+  def __init__(self, window_size):
+    self.vectorizer = CountVectorizer(stop_words='english')
+    self.window_size = window_size
 
 class ContextRestrictedBagOfBigrams(ContextRestrictedBagOfWords):
   def __init__(self, window_size):
@@ -193,7 +205,20 @@ class OptionAwareNaiveBayesLeftRight(OptionAwareNaiveBayes):
     self.classifier = MultinomialNB()
     window_size = kwargs.get('window_size', 3)
     self.vectorizer = ContextRestrictedBagOfWordsLeftRight(window_size)
-    
+
+class OptionAwareNaiveBayesLeftRightCutoff(OptionAwareNaiveBayes):
+  def __init__(self, **kwargs):
+    self.classifier = MultinomialNB()
+    window_size = kwargs.get('window_size', 3)
+    cutoff = kwargs.get('cutoff', 3)
+    self.vectorizer = ContextRestrictedBagOfWordsLeftRightCutoff(window_size, cutoff)
+
+class OptionAwareNaiveBayesLeftRightStopWords(OptionAwareNaiveBayes):
+  def __init__(self, **kwargs):
+    self.classifier = MultinomialNB()
+    window_size = kwargs.get('window_size', 3)
+    self.vectorizer = ContextRestrictedBagOfWordsLeftRightStopWords(window_size)
+
 class OptionAwareNaiveBayesBigrams(OptionAwareNaiveBayes):
   def __init__(self, **kwargs):
     self.classifier = MultinomialNB()
