@@ -116,6 +116,17 @@ Switched from just bigrams to unigrams and bigrams.
 |Vote agreement threshold|Classifier trained on *EMEA*|Classifier trained on *Medline*|
 |75%|61.2%|67.3%|
 
+** OptionAwareNaiveBayesLeftRightMTurk
+
+Same as =OptionAwareNaiveBayes= but with different left and right contexts, trained on ambiguous data. Performed leave one out crossvalidation to obtain results.
+
+|Vote agreement threshold|Classifier trained on *Ambiguous data*|Window size|
+|75%|49.5%|1|
+|75%|49.5%|3|
+|75%|49.5%|10|
+
+The features are actually different for each window size but doesn't seem to affect the results. Same for using different priors.
+
 * Agreement MTurk vs. Expert
 
 About 200 instances were hand-annotated by an expert and compared with MTurk votes. The comparison table can be downloaded [[http://davtyan.org/pml/mturk_expert_comparison.xlsx][here]]. In the table, result =NONE= for Mechanical Turk means eigher =None of the above= or =I don't know= replies.
