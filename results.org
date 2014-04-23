@@ -127,7 +127,7 @@ Two dimensionality reduction strategies have been investigated for the currently
 1. Removing words with low frequencies from the bag of words dictionary - =ContextRestrictedBagOfWordsLeftRightCutoff=
 1. Removing English stop-words (from =sklearn= stop-word list) - =ContextRestrictedBagOfWordsLeftRightStopWords=
 
-Full experiment results can be observerd [here](compare_vectorizers.tsv). Summary:
+Full experiment results *for vote agreement threshold 75%* can be observerd [here](compare_vectorizers.tsv). Summary:
 
 1. As suspected, deleting stop-words makes classification worse
 1. Cut-off works well for Medline
@@ -136,6 +136,8 @@ Full experiment results can be observerd [here](compare_vectorizers.tsv). Summar
 |OptionAwareNaiveBayesLeftRightCutoff|8|9|53.1%|73.5%|
 |OptionAwareNaiveBayesLeftRightCutoff|4|2|67.3%|55.1%|
 |OptionAwareNaiveBayesLeftRight|4||67.3%|53.1%|
+
+The Medline results are the same as =OptionAwareNaiveBayesFullContext= without cut-off, so this classifier needs to be tested with cut-off as well for Medline.
 
 * Self-contained MTurk classification
 
