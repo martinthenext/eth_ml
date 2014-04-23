@@ -116,16 +116,37 @@ Switched from just bigrams to unigrams and bigrams.
 |Vote agreement threshold|Classifier trained on *EMEA*|Classifier trained on *Medline*|
 |75%|61.2%|67.3%|
 
-** OptionAwareNaiveBayesLeftRightMTurk
+** Best classifier
 
-Same as =OptionAwareNaiveBayes= but with different left and right contexts, trained on ambiguous data. Performed leave one out crossvalidation to obtain results.
+=OptionAwareNaiveBayesLeftRight= looks like the best classifier, with window size =3= for EMEA and unrestricted context (or big window sizes) for Medline.
 
-|Vote agreement threshold|Classifier trained on *Ambiguous data*|Window size|
+* Dimensionality reduction
+
+Two dimensionality reduction strategies have been investigated for the currently used bag of words:
+
+1. Removing words with low frequencies from the bag of words dictionary - =ContextRestrictedBagOfWordsLeftRightCutoff=
+1. Removing English stop-words (from =sklearn= stop-word list) - =ContextRestrictedBagOfWordsLeftRightStopWords=
+
+Full experiment results can be observerd [here](compare_vectorizers.tsv). Summary:
+
+1. As suspected, deleting stop-words makes classification worse
+1. Cut-off works well for Medline
+
+|Classifier|Window size|Word frequency cut-off|Agreement when trained on EMEA|Agreement when trained on Medline|
+|OptionAwareNaiveBayesLeftRightCutoff|8|9|53.1%|73.5%|
+|OptionAwareNaiveBayesLeftRightCutoff|4|2|67.3%|55.1%|
+|OptionAwareNaiveBayesLeftRight|4||67.3%|53.1%|
+
+* Self-contained MTurk classification
+
+Experiment: train =OptionAwareNaiveBayesLeftRight= classifier purely on MTurk labeled data and perform leave-one-out cross-validation.
+
+|Vote agreement threshold|CV score|Window size|
 |75%|49.5%|1|
 |75%|49.5%|3|
 |75%|49.5%|10|
 
-The features are actually different for each window size but doesn't seem to affect the results. Same for using different priors.
+The features are actually different for each window size but doesn't seem to affect the results. Same for using different priors. Hence, MTurk data is not enough to train the classifier, need to use unombiguous data as well.
 
 * Agreement MTurk vs. Expert
 
