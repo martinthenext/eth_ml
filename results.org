@@ -127,7 +127,7 @@ Two dimensionality reduction strategies have been investigated for the currently
 1. Removing words with low frequencies from the bag of words dictionary - =ContextRestrictedBagOfWordsLeftRightCutoff=
 1. Removing English stop-words (from =sklearn= stop-word list) - =ContextRestrictedBagOfWordsLeftRightStopWords=
 
-Full experiment results *for vote agreement threshold 75%* can be observerd [here](compare_vectorizers.tsv). Summary:
+Full experiment results *for vote agreement threshold 75%* can be observerd [[here][compare_vectorizers.tsv]]. Summary:
 
 1. As suspected, deleting stop-words makes classification worse
 1. Cut-off works well for Medline
