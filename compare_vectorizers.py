@@ -51,21 +51,25 @@ parser.add_argument("--train", help="First file is a SSC corpus file, train a cl
 args = parser.parse_args()
 
 if args.train:
-  for i in range(1,10):
-    print 'OptionAwareNaiveBayesLeftRight(%d)\t%f' % ( i,
+#  for i in range(1,10):
+#    print 'OptionAwareNaiveBayesLeftRight(%d)\t%f' % ( i,
+#            get_mturk_classifier_agreement(args.classifier_file_path, args.vote_csv_file_path,
+#            models.OptionAwareNaiveBayesLeftRight, window_size=i) )
+#  for i in range(1,10):
+#    for j in range(1,10):
+#      print 'OptionAwareNaiveBayesLeftRightCutoff(%d, %d)\t%f' % ( i, j,
+#              get_mturk_classifier_agreement(args.classifier_file_path, args.vote_csv_file_path,
+#              models.OptionAwareNaiveBayesLeftRightCutoff, window_size=i, cutoff=j) )
+#  for i in range(1,10):
+#    print 'OptionAwareNaiveBayesLeftRightStopWords(%d)\t%f' % ( i,
+#            get_mturk_classifier_agreement(args.classifier_file_path, args.vote_csv_file_path,
+#            models.OptionAwareNaiveBayesLeftRightStopWords, window_size=i) )
+  for i in range(1,20):
+    print 'OptionAwareNaiveBayesFullContextLeftRightCutoff(%d)\t%f' % ( i,
             get_mturk_classifier_agreement(args.classifier_file_path, args.vote_csv_file_path,
-            models.OptionAwareNaiveBayesLeftRight, window_size=i) )
-  for i in range(1,10):
-    for j in range(1,10):
-      print 'OptionAwareNaiveBayesLeftRightCutoff(%d, %d)\t%f' % ( i, j,
-              get_mturk_classifier_agreement(args.classifier_file_path, args.vote_csv_file_path,
-              models.OptionAwareNaiveBayesLeftRightCutoff, window_size=i, cutoff=j) )
-  for i in range(1,10):
-    print 'OptionAwareNaiveBayesLeftRightStopWords(%d)\t%f' % ( i,
-            get_mturk_classifier_agreement(args.classifier_file_path, args.vote_csv_file_path,
-            models.OptionAwareNaiveBayesLeftRightStopWords, window_size=i) )
+            models.OptionAwareNaiveBayesFullContextLeftRightCutoff, cutoff=i) )
 else:
-  # TODO: does not work without "--train 1"
+  # does not work without "--train 1", run like this:
+  # python compare_vectorizers.py Medline_first_1000.xml vote_results_thr0.75.csv --train=1
   print get_mturk_pickled_classifier_agreement(args.classifier_file_path, args.vote_csv_file_path,
    models.OptionAwareNaiveBayesLeftRight)
-  

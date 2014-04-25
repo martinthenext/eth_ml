@@ -252,3 +252,15 @@ class OptionAwareNaiveBayesFullContextLeftRight(OptionAwareNaiveBayes):
   def __init__(self, **kwargs):
     self.classifier = MultinomialNB()
     self.vectorizer = FullContextBagOfWordsLeftRight()
+
+class FullContextBagOfWordsLeftRightCutoff(FullContextBagOfWordsLeftRight):
+  def __init__(self, min_df):
+    self.vectorizer = CountVectorizer(min_df=min_df)
+    self.min_df = min_df		
+
+class OptionAwareNaiveBayesFullContextLeftRightCutoff(OptionAwareNaiveBayes):
+  def __init__(self, **kwargs):
+    self.classifier = MultinomialNB()
+    cutoff = kwargs.get('cutoff', 3)
+    self.vectorizer = FullContextBagOfWordsLeftRightCutoff(cutoff)
+
