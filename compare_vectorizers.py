@@ -44,16 +44,12 @@ def get_mturk_pickled_classifier_agreement(classifier_pickle_file, mturk_vote_fi
   return get_agreement(classifier, mturk_labeled_data)
 
 parser = argparse.ArgumentParser()
-parser.add_argument("classifier_file_path")
+parser.add_argument("ssc_file_path")
 parser.add_argument("vote_csv_file_path")
-parser.add_argument("--train", help="First file is a SSC corpus file, train a classifier on it instead of deserializing")
 
 args = parser.parse_args()
 
-if args.train:
-  for i in range(1,20):
-    print 'OptionAwareNaiveBayesFullContextLeftRightCutoff(%d)\t%f' % ( i,
-            get_mturk_classifier_agreement(args.classifier_file_path, args.vote_csv_file_path,
-            models.OptionAwareNaiveBayesFullContextLeftRightCutoff, cutoff=i) )
-else:
-  raise NotImplementedError("Does not work on pickles, put --train 1")
+for i in [0.00001, 0.0005]:
+  print 'OptionAwareNaiveBayesFullContextLeftRightCutoff(%s)\t%f' % ( str(i),
+          get_mturk_classifier_agreement(args.ssc_file_path, args.vote_csv_file_path,
+          models.OptionAwareNaiveBayesFullContextLeftRightCutoff, cutoff=i) )
