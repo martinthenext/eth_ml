@@ -132,12 +132,17 @@ Full experiment results *for vote agreement threshold 75%* can be observerd [[co
 1. As suspected, deleting stop-words makes classification worse
 1. Cut-off works well for Medline
 
+Best results for either EMEA or Medline:
+
 |Classifier|Window size|Word frequency cut-off|Agreement when trained on EMEA|Agreement when trained on Medline|
 |OptionAwareNaiveBayesLeftRightCutoff|8|9|53.1%|73.5%|
 |OptionAwareNaiveBayesLeftRightCutoff|4|2|67.3%|55.1%|
 |OptionAwareNaiveBayesLeftRight|4||67.3%|53.1%|
+|OptionAwareNaiveBayesFullContextLeftRightCutoff||8|61.2%|75.5%|
 
 The Medline results are the same as =OptionAwareNaiveBayesFullContext= without cut-off, so this classifier needs to be tested with cut-off as well for Medline.
+
+[[http://davtyan.org/pml/feature-chart.png]]
 
 * Self-contained MTurk classification
 
