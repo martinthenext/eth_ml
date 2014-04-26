@@ -125,4 +125,10 @@ OptionAwareNaiveBayesFullContextLeftRightCutoff	-	0.01	-	0.510204
 OptionAwareNaiveBayesFullContextLeftRightCutoff	-	0.1	-	0.469388
 OptionAwareNaiveBayesFullContextLeftRightCutoff	-	0.5	-	0.408163
 OptionAwareNaiveBayesFullContextLeftRightCutoff	-	0.7	-	0.408163
+OptionAwareNaiveBayesFullContextLeftRightCutoff	-	0.0001	-	0.755102
+OptionAwareNaiveBayesFullContextLeftRightCutoff	-	0.001	-	0.693878
+OptionAwareNaiveBayesFullContextLeftRightCutoff	-	0.005	-	0.530612
+OptionAwareNaiveBayesFullContextLeftRightCutoff	-	1e-05	-	0.755102
+OptionAwareNaiveBayesFullContextLeftRightCutoff	-	0.0005	-	0.653061
+
 
