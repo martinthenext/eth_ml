@@ -1,6 +1,9 @@
-from data import Annotation, FullContextBagOfWordsLeftRightCutoff
+from data import Annotation
+from models import FullContextBagOfWordsLeftRightCutoff
 import itertools
 import random
+from sklearn.naive_bayes import MultinomialNB
+import numpy
 
 '''
 
@@ -28,6 +31,12 @@ class WeightedPartialFitPassiveTransferClassifier(object):
 
     weight_vector = [self.target_weight] * len(annotations)
     self.classifier.partial_fit(X, y, Annotation.GROUP_MAPPING.values(), weight_vector)
+
+  def get_group_number(self, annotation, prob_vector):
+    group_option_indices = annotation.get_group_number()
+    group_option_prob = [prob_vector[group_option_index] for group_option_index in group_option_indices]
+    group_index, _ = max(zip(group_option_indices, group_option_prob), key = lambda (index, prob): prob)
+    return group_index
 
   def predict(self, annotations):
     X = self.vectorizer.transform(annotations)

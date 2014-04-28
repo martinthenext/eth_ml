@@ -38,7 +38,7 @@ def get_mturk_classifier_agreement(ssc_file_path, mturk_vote_file_path, classifi
 
   return get_agreement(classifier, mturk_labeled_data)
 
-def get_mturk_pickled_classifier_agreement(classifier_pickle_file, mturk_vote_file_path, classifier_class, **kwargs):
+def get_mturk_pickled_classifier_agreement(classifier_pickle_file, mturk_vote_file_path, **kwargs):
   classifier = joblib.load(classifier_pickle_file)
   mturk_labeled_data = data.load_ambiguous_annotations_labeled(mturk_vote_file_path)
   return get_agreement(classifier, mturk_labeled_data)
@@ -54,5 +54,4 @@ if args.train:
   print get_mturk_classifier_agreement(args.classifier_file_path, args.vote_csv_file_path,
    models.OptionAwareNaiveBayesLeftRight)
 else:
-  print get_mturk_pickled_classifier_agreement(args.classifier_file_path, args.vote_csv_file_path,
-   models.OptionAwareNaiveBayesLeftRight)
+  print get_mturk_pickled_classifier_agreement(args.classifier_file_path, args.vote_csv_file_path)
