@@ -3,7 +3,7 @@
 We use two datasets for training an annotation classifier:
 
 1. Source dataset - unambiguous annotations from corpora
-2 . Target dataset - ambiguous annotations labeled by Mechanical Turk majority vote with 75% agreement threshold ([data](https://kitt.cl.uzh.ch/kitt/mantracrowd/disambig/vote_results.csv?AgreementThr=0.6))
+2. Target dataset - ambiguous annotations labeled by Mechanical Turk majority vote with 75% agreement threshold ([data](https://kitt.cl.uzh.ch/kitt/mantracrowd/disambig/vote_results.csv?AgreementThr=0.6))
 
 *Note:* Mechanical Turk dataset is bigger than the one used in [results.org](results.org) - results not immediately comparable.
 
