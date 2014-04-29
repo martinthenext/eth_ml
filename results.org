@@ -165,3 +165,7 @@ About 200 instances were hand-annotated by an expert and compared with MTurk vot
 |Where both votes are meaningful|81%|
 
 By meaningful vote here we mean not =None of the above= and not =I don't know=.
+
+* Transfer learning and Active learning
+
+See results in the [[transfer_active.md][separate file]]

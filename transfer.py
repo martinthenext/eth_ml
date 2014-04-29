@@ -24,10 +24,10 @@ class WeightedPartialFitPassiveTransferClassifier(object):
 
     self.classifier.fit(X, y)
 
-  # Train on ambiguous annotations with according group number labels
+  # Train on ambiguous annotations with according group labels
   def train_target_online(self, annotations, labels):
     X = self.vectorizer.transform(annotations)
-    y = numpy.array(labels)
+    y = numpy.array([Annotation.GROUP_MAPPING[label] for label in labels])
 
     weight_vector = [self.target_weight] * len(annotations)
     self.classifier.partial_fit(X, y, Annotation.GROUP_MAPPING.values(), weight_vector)
