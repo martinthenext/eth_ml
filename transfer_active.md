@@ -9,7 +9,7 @@ We use two datasets for training an annotation classifier:
 
 ## WeightedPartialFitPassiveTransferClassifier
 
-This classifier first trains MultinomialNB with source dataset, then uses `partial_fit` to train it also on the target dataset with higher `sample_weight`, see [source](transfer.py) and [docs](http://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.MultinomialNB.html#sklearn.naive_bayes.MultinomialNB.partial_fit). In the experiment for 100 simulations:
+This classifier first trains MultinomialNB with source dataset, then uses `partial_fit` to train it also on the target dataset with higher `sample_weight`, see [source](transfer.py) and [docs](http://scikit-learn.org/stable/modules/generated/sklearn.naive_bayes.MultinomialNB.html#sklearn.naive_bayes.MultinomialNB.partial_fit). In the experiment for **1000 simulations**:
 
 1. Split ambiguous annotation dataset into train (2/3) and validation (1/3) sets
 1. Validate the initial transfer classifier (trained on unambiguous annotations only)
@@ -23,8 +23,11 @@ Then average in agreement increase is measured.
 
 |Source weight/Target weight|Source = EMEA|Source = Medline|
 | --- | --- | --- |
-|1/100|1.2%|1.4%|
-|1/1000|1%|4.6%|
-|1/10000|-1.7%|-1.3%|
+|1/100|1%|1%|
+|1/500|5%|0%|
+|1/1000|5%|0%|
+|1/5000|3%|1%|
+|1/10000|-1%|-1%|
+|1/50000|-3%|-1%|
 
-*Results seem to have high variability.*
+*Results seem to have high variability*, so rounded to percents only.
