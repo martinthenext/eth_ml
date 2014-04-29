@@ -22,6 +22,7 @@ Then average in agreement increase is measured.
 ### Average increase in agreement on validation set
 
 |Source weight/Target weight|Source = EMEA|Source = Medline|
+| --- | --- | --- |
 |1/100|1.2%|1.4%|
 |1/1000|1%|4.6%|
 |1/10000|-1.7%|-1.3%|
