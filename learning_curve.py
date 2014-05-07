@@ -69,7 +69,7 @@ def diff_iter(seq):
    itertools.izip(itertools.islice(seq, 0, len(seq) - 1), itertools.islice(seq, 1, len(seq)))
   )
 
-def format_flot_list(seq, sep=" "):
+def format_float_list(seq, sep=" "):
   result = ""
   for item in seq:
     result += "%.2f" % item
@@ -80,5 +80,5 @@ classifier = joblib.load(classifier_pickle_filename)
 annotations, labels = load_ambiguous_annotations_labeled(annotations_labeled_filename)
 
 accuracy_progression = get_accuracy_progression(classifier, annotations, labels, 1000)
-print format_flot_list(accuracy_progression)
-print format_flot_list(list(diff_iter(accuracy_progression)))
+print format_float_list(accuracy_progression)
+print format_float_list(list(diff_iter(accuracy_progression)))
