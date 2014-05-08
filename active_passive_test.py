@@ -57,7 +57,7 @@ class PassiveLearner(object):
     for key, value in kwargs.items():
       setattr(self.classifier, key, value)
 
-    self.annotations = annotations
+    self.annotations = np.array(annotations)
     self.labels = labels
     self.index_pool = set(range(len(annotations)))
 
@@ -71,13 +71,17 @@ class PassiveLearner(object):
       index = self.pop_index_from_pool()
       annotation, label = self.annotations[index], self.labels[index]
       self.classifier.train_target_online([annotation], [label])
-      print 'trained on point %s' % index
+      print 'trained on point %s, %s left' % (index, len(self.index_pool))
 
 class UncertaintySamplingLeastConfidenceActiveLearner(PassiveLearner):
   def pop_index_from_pool(self):
-    confidence = self.classifier.get_prob_estimates(self.annotations)
+    pool_indexes = list(self.index_pool)
+    pool_confidences = self.classifier.get_prob_estimates(self.annotations[pool_indexes])
     # pick the index of the least confident prediction
-    return np.argmin(confidence)
+    min_confidence_pool_index = np.argmin(pool_confidences)
+    index = pool_indexes[min_confidence_pool_index]
+    self.index_pool.remove(index)
+    return index
 
 
 def get_accuracy_progression(train_test_set, classifier_to_measure, annotations, labels, target_weight, learner_class):
@@ -86,14 +90,15 @@ def get_accuracy_progression(train_test_set, classifier_to_measure, annotations,
   learner = learner_class(classifier_to_measure, pool_annotations, pool_labels, target_weight = 1000)
 
   # initialize the accuracy list with the initial accuracy
-  accuracy_list = [ get_agreement(learner.classifier, (test_annotations, test_labels)) ]
+  agreement = get_agreement(learner.classifier, (test_annotations, test_labels))
+  print agreement
 
   for _ in pool_annotations:
     learner.learn()
-    accuracy_list.append( get_agreement(learner.classifier, (test_annotations, test_labels)) )
-
-  return accuracy_list
-
+    new_agreement = get_agreement(learner.classifier, (test_annotations, test_labels))
+    if agreement != new_agreement:
+      print new_agreement
+      agreement = new_agreement
 
 def diff_iter(seq):
   return (y - x for x, y in
@@ -112,14 +117,8 @@ classifier = joblib.load(classifier_pickle_filename)
 annotations, labels = load_ambiguous_annotations_labeled(annotations_labeled_filename)
 train_test_set = train_test_split(annotations, labels, test_size = 0.33) 
 
-accuracy_progression = get_accuracy_progression(train_test_set, classifier, annotations, labels, 1000, PassiveLearner)
 print 'Passive Learner'
-print format_float_list(accuracy_progression)
-print format_float_list(list(diff_iter(accuracy_progression)))
+get_accuracy_progression(train_test_set, classifier, annotations, labels, 1000, PassiveLearner)
 
-classifier = joblib.load(classifier_pickle_filename)
-
-accuracy_progression = get_accuracy_progression(train_test_set, classifier, annotations, labels, 1000, UncertaintySamplingLeastConfidenceActiveLearner)
 print 'Active Learner'
-print format_float_list(accuracy_progression)
-print format_float_list(list(diff_iter(accuracy_progression)))
+get_accuracy_progression(train_test_set, classifier, annotations, labels, 1000, UncertaintySamplingLeastConfidenceActiveLearner)
