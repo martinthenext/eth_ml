@@ -72,12 +72,18 @@ class PassiveLearner(object):
       annotation, label = self.annotations[index], self.labels[index]
       self.classifier.train_target_online([annotation], [label])
 
-# this does not change the state of classifier
-def get_accuracy_progression(classifier_to_measure, annotations, labels, target_weight):
+class UncertaintySamplingLeastConfidenceActiveLearner(PassiveLearner):
+  def pop_index_from_pool(self):
+    confidence = self.classifier.get_prob_estimates(self.annotations)
+    # pick the index of the least confident prediction
+    return np.argmin(confidence)
+
+
+def get_accuracy_progression(classifier_to_measure, annotations, labels, target_weight, learner_class):
   pool_annotations, test_annotations, pool_labels, test_labels = train_test_split(
         annotations, labels, test_size = 0.33) 
 
-  passive_learner = PassiveLearner(classifier_to_measure, pool_annotations, pool_labels, target_weight = 1000)
+  passive_learner = learner_class(classifier_to_measure, pool_annotations, pool_labels, target_weight = 1000)
 
   # initialize the accuracy list with the initial accuracy
   accuracy_list = [ get_agreement(passive_learner.classifier, (test_annotations, test_labels)) ]
@@ -102,8 +108,15 @@ def format_float_list(seq, sep=" "):
   return result
 
 classifier = joblib.load(classifier_pickle_filename)
+
 annotations, labels = load_ambiguous_annotations_labeled(annotations_labeled_filename)
 
-accuracy_progression = get_accuracy_progression(classifier, annotations, labels, 1000)
+accuracy_progression = get_accuracy_progression(classifier, annotations, labels, 1000, PassiveLearner)
+print 'Passive Learner'
+print format_float_list(accuracy_progression)
+print format_float_list(list(diff_iter(accuracy_progression)))
+
+accuracy_progression = get_accuracy_progression(classifier, annotations, labels, 1000, UncertaintySamplingLeastConfidenceActiveLearner)
+print 'Active Learner'
 print format_float_list(accuracy_progression)
 print format_float_list(list(diff_iter(accuracy_progression)))
