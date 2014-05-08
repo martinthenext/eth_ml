@@ -32,10 +32,13 @@ class WeightedPartialFitPassiveTransferClassifier(object):
     weight_vector = [self.target_weight] * len(annotations)
     self.classifier.partial_fit(X, y, Annotation.GROUP_MAPPING.values(), weight_vector)
 
-  def get_group_number(self, annotation, prob_vector):
+  def get_group_number_prob_pair(self, annotation, prob_vector):
     group_option_indices = annotation.get_group_number()
     group_option_prob = [prob_vector[group_option_index] for group_option_index in group_option_indices]
-    group_index, _ = max(zip(group_option_indices, group_option_prob), key = lambda (index, prob): prob)
+    return max(zip(group_option_indices, group_option_prob), key = lambda (index, prob): prob)
+ 
+  def get_group_number(self, annotation, prob_vector):
+    group_index, _ = self.get_group_number_prob_pair(annotation, prob_vector)
     return group_index
 
   def predict(self, annotations):
@@ -44,11 +47,16 @@ class WeightedPartialFitPassiveTransferClassifier(object):
     return numpy.array([self.get_group_number(annotation, row)
      for row, annotation in itertools.izip(probs, annotations)])
 
-  # Passive learner
-  def pick_and_train(annotation_label_tuple_pool, sample_size):
-    annotation_label_tuples = random.sample(annotation_label_tuple_pool, sample_size)
-    annotations, labels = zip(*annotation_label_tuples)
-    self.train_target_online(annotations, labels)
+  def get_max_probability(self, annotation, prob_vector):
+    _, prob = self.get_group_number_prob_pair(annotation, prob_vector)
+    return prob
+
+  def get_prob_estimates(self, annotations):
+    X = self.vectorizer.transform(annotations)
+    probs = self.classifier.predict_proba(X)
+    return numpy.array([self.get_max_probability(annotation, row)
+      for row, annotation in itertools.izip(probs, annotations)])
+
 
 '''
 TODO:
