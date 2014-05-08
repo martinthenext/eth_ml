@@ -21,6 +21,7 @@ from copy import deepcopy
 # TODO make the deprecation warning go away
 from sklearn.externals import joblib
 import random
+import plot_curves
 
 classifier_pickle_filename = sys.argv[1]
 annotations_labeled_filename = sys.argv[2]
@@ -86,19 +87,18 @@ class UncertaintySamplingLeastConfidenceActiveLearner(PassiveLearner):
 
 def get_accuracy_progression(train_test_set, classifier_to_measure, annotations, labels, target_weight, learner_class):
   pool_annotations, test_annotations, pool_labels, test_labels = train_test_set
+  accuracy_progression = np.zeros(len(pool_annotations) + 1)
 
   learner = learner_class(classifier_to_measure, pool_annotations, pool_labels, target_weight = 1000)
 
   # initialize the accuracy list with the initial accuracy
-  agreement = get_agreement(learner.classifier, (test_annotations, test_labels))
-  print agreement
+  accuracy_progression[0] = get_agreement(learner.classifier, (test_annotations, test_labels))
 
-  for _ in pool_annotations:
+  for i in range(1, len(accuracy_progression)):
     learner.learn()
-    new_agreement = get_agreement(learner.classifier, (test_annotations, test_labels))
-    if agreement != new_agreement:
-      print new_agreement
-      agreement = new_agreement
+    accuracy_progression[i] = get_agreement(learner.classifier, (test_annotations, test_labels))
+
+  return accuracy_progression
 
 def diff_iter(seq):
   return (y - x for x, y in
@@ -117,8 +117,7 @@ classifier = joblib.load(classifier_pickle_filename)
 annotations, labels = load_ambiguous_annotations_labeled(annotations_labeled_filename)
 train_test_set = train_test_split(annotations, labels, test_size = 0.33) 
 
-print 'Passive Learner'
-get_accuracy_progression(train_test_set, classifier, annotations, labels, 1000, PassiveLearner)
+passive_learner_accuracy = get_accuracy_progression(train_test_set, classifier, annotations, labels, 1000, PassiveLearner)
+active_learner_accuracy = get_accuracy_progression(train_test_set, classifier, annotations, labels, 1000, UncertaintySamplingLeastConfidenceActiveLearner)
 
-print 'Active Learner'
-get_accuracy_progression(train_test_set, classifier, annotations, labels, 1000, UncertaintySamplingLeastConfidenceActiveLearner)
+plot_curves.plot_curves(sys.argv[3], PassiveLearner=passive_learner_accuracy, ActiveLearner=active_learner_accuracy)

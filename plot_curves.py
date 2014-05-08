@@ -7,9 +7,13 @@ plot_curves('comparison_learning',title='Active learner vs Passive learning curv
 plot_curves('potatoes',title='Cumulative # potatoes eaten', xlabel='Days', ylabel='Potatoes', GreenPotatoes=[1,2,3,4])
 '''
 
+import matplotlib
+matplotlib.use('AGG')
+
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import host_subplot
 from matplotlib.ticker import MaxNLocator
+
 
 def plot_curves(file_name, title = '', xlabel = '', ylabel = '', **kwargs):
     fig = host_subplot(111)
