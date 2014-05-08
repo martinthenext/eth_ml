@@ -111,12 +111,18 @@ classifier = joblib.load(classifier_pickle_filename)
 
 annotations, labels = load_ambiguous_annotations_labeled(annotations_labeled_filename)
 
-accuracy_progression = get_accuracy_progression(classifier, annotations, labels, 1000, PassiveLearner)
-print 'Passive Learner'
-print format_float_list(accuracy_progression)
-print format_float_list(list(diff_iter(accuracy_progression)))
+N_SIMULATIONS = 100
+accuracy_diffs = np.zeros((2, N_SIMULATIONS))
 
-accuracy_progression = get_accuracy_progression(classifier, annotations, labels, 1000, UncertaintySamplingLeastConfidenceActiveLearner)
-print 'Active Learner'
-print format_float_list(accuracy_progression)
-print format_float_list(list(diff_iter(accuracy_progression)))
+
+for i in range(N_SIMULATIONS):
+  accuracy_progression_passive = get_accuracy_progression(classifier, annotations, labels, 1000, PassiveLearner)
+  accuracy_diffs[0, i] = accuracy_progression_passive[-1] - accuracy_progression_passive[0]
+  
+  accuracy_progression_active = get_accuracy_progression(classifier, annotations, labels, 1000, UncertaintySamplingLeastConfidenceActiveLearner)
+  accuracy_diffs[1, i] = accuracy_progression_active[-1] - accuracy_progression_active[0]
+
+
+accuracy_diff_means = np.mean(accuracy_diffs, axis=1)
+print 'Difference between quality before and after learning on MTurk, simulations: %s' % N_SIMULATIONS
+print 'Passive learner: %.2f\nActive learner: %.2f' % tuple(accuracy_diff_means)
