@@ -20,6 +20,7 @@ import itertools
 from copy import deepcopy
 # TODO make the deprecation warning go away
 from sklearn.externals import joblib
+import random
 
 classifier_pickle_filename = sys.argv[1]
 annotations_labeled_filename = sys.argv[2]
@@ -48,21 +49,45 @@ def get_classifier_agreement_increase_table(target_weight_list, n_simulations = 
     result += str(weight), np.mean(agreement_after - agreement_before)
   return result
 
+''' Wrap a classifier into this to train passively
+'''
+class PassiveLearner(object):
+  def __init__(self, classifier, annotations, labels, **kwargs):
+    self.classifier = deepcopy(classifier)
+    for key, value in kwargs.items():
+      setattr(self.classifier, key, value)
+
+    self.annotations = annotations
+    self.labels = labels
+    self.index_pool = set(range(len(annotations)))
+
+  def pop_index_from_pool(self):
+    training_index = random.sample(self.index_pool, 1)[0]
+    self.index_pool.remove(training_index)
+    return training_index
+
+  def learn(self):
+    if self.index_pool:
+      index = self.pop_index_from_pool()
+      annotation, label = self.annotations[index], self.labels[index]
+      self.classifier.train_target_online([annotation], [label])
+
 # this does not change the state of classifier
 def get_accuracy_progression(classifier_to_measure, annotations, labels, target_weight):
-  classifier = deepcopy(classifier_to_measure)
-  classifier.target_weight = target_weight
-
   pool_annotations, test_annotations, pool_labels, test_labels = train_test_split(
         annotations, labels, test_size = 0.33) 
 
+  passive_learner = PassiveLearner(classifier_to_measure, pool_annotations, pool_labels, target_weight = 1000)
+
   # initialize the accuracy list with the initial accuracy
-  accuracy_list = [ get_agreement(classifier, (test_annotations, test_labels)) ]
-  for pool_annotation, pool_label in itertools.izip(pool_annotations, pool_labels):
-    classifier.train_target_online([pool_annotation], [pool_label])
-    accuracy_list.append( get_agreement(classifier, (test_annotations, test_labels)) )
+  accuracy_list = [ get_agreement(passive_learner.classifier, (test_annotations, test_labels)) ]
+
+  for _ in pool_annotations:
+    passive_learner.learn()
+    accuracy_list.append( get_agreement(passive_learner.classifier, (test_annotations, test_labels)) )
 
   return accuracy_list
+
 
 def diff_iter(seq):
   return (y - x for x, y in
