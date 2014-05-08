@@ -71,6 +71,7 @@ class PassiveLearner(object):
       index = self.pop_index_from_pool()
       annotation, label = self.annotations[index], self.labels[index]
       self.classifier.train_target_online([annotation], [label])
+      print 'trained on point %s' % index
 
 class UncertaintySamplingLeastConfidenceActiveLearner(PassiveLearner):
   def pop_index_from_pool(self):
@@ -79,18 +80,17 @@ class UncertaintySamplingLeastConfidenceActiveLearner(PassiveLearner):
     return np.argmin(confidence)
 
 
-def get_accuracy_progression(classifier_to_measure, annotations, labels, target_weight, learner_class):
-  pool_annotations, test_annotations, pool_labels, test_labels = train_test_split(
-        annotations, labels, test_size = 0.33) 
+def get_accuracy_progression(train_test_set, classifier_to_measure, annotations, labels, target_weight, learner_class):
+  pool_annotations, test_annotations, pool_labels, test_labels = train_test_set
 
-  passive_learner = learner_class(classifier_to_measure, pool_annotations, pool_labels, target_weight = 1000)
+  learner = learner_class(classifier_to_measure, pool_annotations, pool_labels, target_weight = 1000)
 
   # initialize the accuracy list with the initial accuracy
-  accuracy_list = [ get_agreement(passive_learner.classifier, (test_annotations, test_labels)) ]
+  accuracy_list = [ get_agreement(learner.classifier, (test_annotations, test_labels)) ]
 
   for _ in pool_annotations:
-    passive_learner.learn()
-    accuracy_list.append( get_agreement(passive_learner.classifier, (test_annotations, test_labels)) )
+    learner.learn()
+    accuracy_list.append( get_agreement(learner.classifier, (test_annotations, test_labels)) )
 
   return accuracy_list
 
@@ -110,20 +110,16 @@ def format_float_list(seq, sep=" "):
 classifier = joblib.load(classifier_pickle_filename)
 
 annotations, labels = load_ambiguous_annotations_labeled(annotations_labeled_filename)
+train_test_set = train_test_split(annotations, labels, test_size = 0.33) 
 
-N_SIMULATIONS = 100
-accuracy_diffs = np.zeros((2, N_SIMULATIONS))
-accuracy_diff_gains = np.zeros(N_SIMULATIONS)
+accuracy_progression = get_accuracy_progression(train_test_set, classifier, annotations, labels, 1000, PassiveLearner)
+print 'Passive Learner'
+print format_float_list(accuracy_progression)
+print format_float_list(list(diff_iter(accuracy_progression)))
 
+classifier = joblib.load(classifier_pickle_filename)
 
-for i in range(N_SIMULATIONS):
-  accuracy_progression_passive = get_accuracy_progression(classifier, annotations, labels, 1000, PassiveLearner)
-  accuracy_diff_passive = accuracy_progression_passive[-1] - accuracy_progression_passive[0]
-  
-  accuracy_progression_active = get_accuracy_progression(classifier, annotations, labels, 1000, UncertaintySamplingLeastConfidenceActiveLearner)
-  accuracy_diff_active = accuracy_progression_active[-1] - accuracy_progression_active[0]
-
-  accuracy_diff_gains[i] = accuracy_diff_active - accuracy_diff_passive
-
-print 'Difference between gain in quality between learners, simulations: %s' % N_SIMULATIONS
-print np.mean(accuracy_diff_gains)
+accuracy_progression = get_accuracy_progression(train_test_set, classifier, annotations, labels, 1000, UncertaintySamplingLeastConfidenceActiveLearner)
+print 'Active Learner'
+print format_float_list(accuracy_progression)
+print format_float_list(list(diff_iter(accuracy_progression)))

@@ -41,12 +41,14 @@ class WeightedPartialFitPassiveTransferClassifier(object):
     group_index, _ = self.get_group_number_prob_pair(annotation, prob_vector)
     return group_index
 
+  # tested, results for the classifier trained on source are not random
   def predict(self, annotations):
     X = self.vectorizer.transform(annotations)
     probs = self.classifier.predict_proba(X) # [n_samples, n_classes]
     return numpy.array([self.get_group_number(annotation, row)
      for row, annotation in itertools.izip(probs, annotations)])
 
+  # tested, results for the classifier trained on source are not random
   def get_max_probability(self, annotation, prob_vector):
     _, prob = self.get_group_number_prob_pair(annotation, prob_vector)
     return prob
