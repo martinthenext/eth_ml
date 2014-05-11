@@ -55,7 +55,7 @@ def get_classifier_agreement_increase_table(target_weight_list, n_simulations = 
 '''
 class PassiveLearner(object):
   def __init__(self, classifier, annotations, labels, **kwargs):
-    self.classifier = classifier
+    self.classifier = deepcopy(classifier)
     for key, value in kwargs.items():
       setattr(self.classifier, key, value)
 
@@ -105,7 +105,7 @@ def get_accuracy_progression(train_test_set, classifier_to_measure, annotations,
 classifier_loaded = joblib.load(classifier_pickle_filename)
 annotations_loaded, labels_loaded = load_ambiguous_annotations_labeled(annotations_labeled_filename)
 
-n_simulations = 50
+n_simulations = 100
 test_size = 0.33
 target_weight = 1000
 
