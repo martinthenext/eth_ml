@@ -105,7 +105,7 @@ def get_accuracy_progression(train_test_set, classifier_to_measure, annotations,
 classifier_loaded = joblib.load(classifier_pickle_filename)
 annotations_loaded, labels_loaded = load_ambiguous_annotations_labeled(annotations_labeled_filename)
 
-n_simulations = 2
+n_simulations = 50
 test_size = 0.33
 target_weight = 1000
 
@@ -135,5 +135,5 @@ for run_number in range(n_simulations):
 passive_avg_accuracy_progression = np.mean(passive_accuracy, axis=0)
 active_avg_accuracy_progression = np.mean(active_accuracy, axis=0)
 
-plot_curves.plot_curves(sys.argv[3], title="Average iteration accuracy for %s simulations" % len(pool),
+plot_curves.plot_curves(sys.argv[3], title="Average iteration accuracy for %s simulations" % n_simulations,
  PassiveLearner=passive_avg_accuracy_progression, ActiveLearner=active_avg_accuracy_progression)
