@@ -19,9 +19,11 @@ def plot_curves(file_name, title = '', xlabel = '', ylabel = '', **kwargs):
     fig = host_subplot(111)
     for name, value in kwargs.items():
       fig.plot(value, label = name)
+      length = len(value)
     plt.legend()
     x_ax = fig.axes.get_xaxis()  ## Get X axis
     x_ax.set_major_locator(MaxNLocator(integer=True))
+    plt.xlim(0, length)
     plt.title(title, fontsize=24)
     plt.xlabel(xlabel, fontsize=18)
     plt.ylabel(ylabel, fontsize=16)
