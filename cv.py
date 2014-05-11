@@ -9,16 +9,14 @@ import numpy as np
 
 from sklearn import cross_validation
 
-annotations = data.load_unambiguous_annotations(sys.argv[1])
-
 class CountPrinter:
   def __init__(self, total):
     self.total = total
     self.current = 0
 
   def count(self):
-    print '%s/%s' % (self.current, self.total)
     self.current += 1
+    print '%s/%s' % (self.current, self.total)
 
 def get_error_rate(classifier_class, annotations, n_folds=10, verbose=False, **kwargs):
   folds = cross_validation.KFold(len(annotations), n_folds=n_folds)
@@ -41,4 +39,6 @@ def get_error_rate(classifier_class, annotations, n_folds=10, verbose=False, **k
 
   return np.mean(fold_errors)
 
-print get_error_rate(models.NaiveBayesContextRestricted, annotations, 10, True, window_size=3)
+if __name__ == "__main__":
+  annotations = data.load_unambiguous_annotations(sys.argv[1])
+  print get_error_rate(models.NaiveBayesContextRestricted, annotations, 10, True, window_size=3)

@@ -22,6 +22,7 @@ from copy import deepcopy
 from sklearn.externals import joblib
 import random
 import plot_curves
+from cv import CountPrinter
 
 classifier_pickle_filename = sys.argv[1]
 annotations_labeled_filename = sys.argv[2]
@@ -54,7 +55,7 @@ def get_classifier_agreement_increase_table(target_weight_list, n_simulations = 
 '''
 class PassiveLearner(object):
   def __init__(self, classifier, annotations, labels, **kwargs):
-    self.classifier = deepcopy(classifier)
+    self.classifier = classifier
     for key, value in kwargs.items():
       setattr(self.classifier, key, value)
 
@@ -72,7 +73,6 @@ class PassiveLearner(object):
       index = self.pop_index_from_pool()
       annotation, label = self.annotations[index], self.labels[index]
       self.classifier.train_target_online([annotation], [label])
-      print 'trained on point %s, %s left' % (index, len(self.index_pool))
 
 class UncertaintySamplingLeastConfidenceActiveLearner(PassiveLearner):
   def pop_index_from_pool(self):
@@ -100,24 +100,40 @@ def get_accuracy_progression(train_test_set, classifier_to_measure, annotations,
 
   return accuracy_progression
 
-def diff_iter(seq):
-  return (y - x for x, y in
-   itertools.izip(itertools.islice(seq, 0, len(seq) - 1), itertools.islice(seq, 1, len(seq)))
-  )
+# Setting up the experiment
 
-def format_float_list(seq, sep=" "):
-  result = ""
-  for item in seq:
-    result += "%.2f" % item
-    result += sep
-  return result
+classifier_loaded = joblib.load(classifier_pickle_filename)
+annotations_loaded, labels_loaded = load_ambiguous_annotations_labeled(annotations_labeled_filename)
 
-classifier = joblib.load(classifier_pickle_filename)
+n_simulations = 2
+test_size = 0.33
+target_weight = 1000
 
-annotations, labels = load_ambiguous_annotations_labeled(annotations_labeled_filename)
-train_test_set = train_test_split(annotations, labels, test_size = 0.33) 
+pool, _, _, _ = train_test_split(annotations_loaded, labels_loaded, test_size = test_size) 
+n_iterations = len(pool) + 1
 
-passive_learner_accuracy = get_accuracy_progression(train_test_set, classifier, annotations, labels, 1000, PassiveLearner)
-active_learner_accuracy = get_accuracy_progression(train_test_set, classifier, annotations, labels, 1000, UncertaintySamplingLeastConfidenceActiveLearner)
+passive_accuracy = np.zeros((n_simulations, n_iterations))
+active_accuracy = np.zeros((n_simulations, n_iterations))
 
-plot_curves.plot_curves(sys.argv[3], PassiveLearner=passive_learner_accuracy, ActiveLearner=active_learner_accuracy)
+counter = CountPrinter(n_simulations)
+
+for run_number in range(n_simulations):
+  # securing statelessness
+  classifier = deepcopy(classifier_loaded)
+  annotations= deepcopy(annotations_loaded)
+  labels = deepcopy(labels_loaded)
+
+  train_test_set = train_test_split(annotations, labels, test_size = test_size) 
+
+  passive_accuracy[run_number] = get_accuracy_progression(
+    train_test_set, classifier, annotations, labels, target_weight, PassiveLearner)
+  active_accuracy[run_number] = get_accuracy_progression(
+    train_test_set, classifier, annotations, labels, target_weight, UncertaintySamplingLeastConfidenceActiveLearner)
+
+  counter.count()
+
+passive_avg_accuracy_progression = np.mean(passive_accuracy, axis=0)
+active_avg_accuracy_progression = np.mean(passive_accuracy, axis=0)
+
+plot_curves.plot_curves(sys.argv[3], title="Average iteration accuracy for %s simulations" % len(pool),
+ PassiveLearner=passive_avg_accuracy_progression, ActiveLearner=active_avg_accuracy_progression)
