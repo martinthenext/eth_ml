@@ -133,7 +133,7 @@ for run_number in range(n_simulations):
   counter.count()
 
 passive_avg_accuracy_progression = np.mean(passive_accuracy, axis=0)
-active_avg_accuracy_progression = np.mean(passive_accuracy, axis=0)
+active_avg_accuracy_progression = np.mean(active_accuracy, axis=0)
 
 plot_curves.plot_curves(sys.argv[3], title="Average iteration accuracy for %s simulations" % len(pool),
  PassiveLearner=passive_avg_accuracy_progression, ActiveLearner=active_avg_accuracy_progression)
