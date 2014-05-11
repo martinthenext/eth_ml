@@ -26,3 +26,4 @@ def plot_curves(file_name, title = '', xlabel = '', ylabel = '', **kwargs):
     plt.xlabel(xlabel, fontsize=18)
     plt.ylabel(ylabel, fontsize=16)
     plt.savefig(file_name+'.png')
+    plt.close()
