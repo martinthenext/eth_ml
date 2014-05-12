@@ -171,7 +171,7 @@ By meaningful vote here we mean not =None of the above= and not =I don't know=.
 About 200 instances were hand-annotated by an expert and compared with classifier votes. 
 
 |Classifier | Strict Agreement| Meaningful Agreement |
-|WeightedPartialFitPassiveTransferClassifier_Medline_2| 53.5%| 61.3%|
+|WeightedPartialFitPassiveTransferClassifier_Medline_2| 53%| 61.3%|
 
 By meaningful agreement here we mean we exclude the points where experts says =IDK= or =None=.
 
