@@ -123,3 +123,27 @@ def load_ambiguous_annotations_labeled(csv_file_name):
       labels.append(vote)
 
   return (annotations, labels)
+
+
+def load_ambiguous_annotations_labeled_generic(file_name):
+  annotations = []
+  labels = []
+
+  with codecs.open(file_name, 'r', 'utf-8') as f:
+    separator_line = f.readline()
+    if re.match('.+\.csv', file_name):
+      sep = re.match("sep=(.)", separator_line).group(1)
+      for line in f:
+        length, offset, groups, text, unit_text, vote, _ = line[:-1].split(sep)
+        annotations.append(Annotation(len=int(length), offset=int(offset), grp=groups, text=text, unit_text=unit_text))
+        labels.append(vote)
+
+    elif re.match('.+\.tsv', file_name):
+      separator_line = f.next()
+      sep = '\t'
+      for line in f:
+        length, offset, groups, text, unit_text, vote = line[:-1].split(sep)
+        annotations.append(Annotation(len=int(length), offset=int(offset), grp=groups, text=text, unit_text=unit_text))
+        labels.append(vote)
+
+  return (annotations, labels)
