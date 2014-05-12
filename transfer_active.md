@@ -35,50 +35,24 @@ Then average in agreement increase is measured.
 
 *Results seem to have high variability*, so rounded to percents only.
 
-## Passive learner
+# Uncertainty sampling
 
-First results: accuracy progression with passive learner training the above classifier on EMEA and Medline corpora:
+Active learning strategy: pick the instance from a pool which has the least estimated prediction probability (using Naive Bayes).
 
-### EMEA
+## Learning curves
 
-Accuracy progression:
+The classifier was trained on unambiguous annotations first (Medline or EMEA corpora). Then 100 times:
 
-    0.60 0.60 0.60 0.62 0.62 0.62 0.62 0.62 0.60 0.60 0.60 0.60 0.60 0.60 0.60 0.60
-    0.60 0.60 0.60 0.60 0.60 0.60 0.60 0.60 0.62 0.62 0.62 0.62 0.62 0.62 0.62 0.62
-    0.62 0.62 0.62 0.60 0.60 0.60 0.58 0.58 0.60 0.60 0.60 0.60 0.60 0.60 0.60 0.60
-    0.60 0.62 0.60 0.60 0.60 0.60 0.60 0.60 0.60 0.60 0.58 0.58 0.58 0.58 0.58 0.58
-    0.58 0.58 0.58 0.58 0.58 0.60 0.60 0.60 0.60 0.62 0.62 0.58 0.58 0.60 0.60 0.58
-    0.58 0.58 0.58 0.58 0.58 0.58 0.58 0.58 0.58 0.58 0.58 0.58 0.58 0.58 0.58 0.58
-    0.58 0.60 0.62 0.62 0.62 0.62 0.62 0.62 0.62 
-
-Diffs:
-
-    0.00 0.00 0.02 0.00 0.00 0.00 0.00 -0.02 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00
-    0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.02 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00
-    0.00 0.00 -0.02 0.00 0.00 -0.02 0.00 0.02 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00
-    0.02 -0.02 0.00 0.00 0.00 0.00 0.00 0.00 0.00 -0.02 0.00 0.00 0.00 0.00 0.00 0.00
-    0.00 0.00 0.00 0.00 0.02 0.00 0.00 0.00 0.02 0.00 -0.04 0.00 0.02 0.00 -0.02 0.00
-    0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00
-    0.02 0.02 0.00 0.00 0.00 0.00 0.00 0.00 
+1. MTurk annotation set was split into train set and validation set
+2. Classifier was trained on train set, one example at a time (passively or actively)
+3. For every iteration accuracy on validation set was measured
 
 ### Medline
 
-Accuracy:
+As previous results show, accuracy for Medline is high enough that training on MTurk data only overfits the classifier.
 
-    0.73 0.73 0.75 0.75 0.75 0.73 0.73 0.73 0.73 0.73 0.73 0.73 0.73 0.73 0.73 0.73
-    0.73 0.73 0.73 0.73 0.73 0.73 0.73 0.73 0.73 0.73 0.73 0.73 0.73 0.73 0.73 0.73
-    0.73 0.73 0.73 0.73 0.73 0.73 0.73 0.73 0.73 0.73 0.71 0.71 0.71 0.71 0.71 0.71
-    0.71 0.71 0.71 0.71 0.71 0.71 0.71 0.71 0.71 0.71 0.71 0.71 0.71 0.69 0.69 0.69
-    0.69 0.69 0.69 0.69 0.69 0.69 0.69 0.69 0.69 0.69 0.69 0.69 0.69 0.69 0.69 0.69
-    0.69 0.69 0.69 0.69 0.69 0.69 0.69 0.69 0.69 0.69 0.69 0.69 0.69 0.69 0.71 0.71
-    0.71 0.71 0.71 0.71 0.71 0.71 0.71 0.71 0.71 
+![](http://davtyan.org/pml/Medline_weight1000_avg100.png)
 
-Diffs:
+### EMEA
 
-    0.00 0.02 0.00 0.00 -0.02 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00
-    0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 
-    0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 -0.02 0.00 0.00 0.00 0.00 0.00 0.00
-    0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 -0.02 0.00 0.00 0.00
-    0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00
-    0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.02 0.00 0.00
-    0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 
+![](http://davtyan.org/pml/EMEA_weight1000_avg100.png)
