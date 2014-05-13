@@ -49,7 +49,7 @@ parser.add_argument("vote_csv_file_path")
 
 args = parser.parse_args()
 
-for i in [0.00001, 0.0005]:
-  print 'OptionAwareNaiveBayesFullContextLeftRightCutoff(%s)\t%f' % ( str(i),
-          get_mturk_classifier_agreement(args.ssc_file_path, args.vote_csv_file_path,
-          models.OptionAwareNaiveBayesFullContextLeftRightCutoff, cutoff=i) )
+print 'OptionAwareNaiveBayesFullContextLeftRightCutoff(9)', get_mturk_classifier_agreement(
+  args.ssc_file_path, args.vote_csv_file_path,
+  models.OptionAwareNaiveBayesFullContextLeftRightCutoff, cutoff=9
+) 
