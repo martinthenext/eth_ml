@@ -16,11 +16,12 @@ import data
 import sys
 from sklearn.externals import joblib
 
-def train_and_serialize(ssc_file_path, serialization_path, classifier_class, **kwargs):
+def train_and_serialize(ssc_file_path, serialization_path, classifier_class, transfer=True, **kwargs):
   unambig_annotations = data.load_unambiguous_annotations(ssc_file_path)
   classifier = classifier_class(**kwargs)
-  classifier.train_source(unambig_annotations)
+  if transfer:
+    classifier.train_source(unambig_annotations)
+  else:
+    classifier.train(unambig_annotations)
 
   joblib.dump(classifier, serialization_path)
-
-train_and_serialize(sys.argv[1], sys.argv[2], transfer.WeightedPartialFitPassiveTransferClassifier, target_weight = 10)
