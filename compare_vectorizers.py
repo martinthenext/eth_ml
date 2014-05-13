@@ -53,3 +53,21 @@ print 'OptionAwareNaiveBayesFullContextLeftRightCutoff(9)', get_mturk_classifier
   args.ssc_file_path, args.vote_csv_file_path,
   models.OptionAwareNaiveBayesFullContextLeftRightCutoff, cutoff=9
 ) 
+
+print "sep=\t"
+for i in range(10):
+  agreement = get_mturk_classifier_agreement(args.ssc_file_path,
+   args.vote_csv_file_path, models.OptionAwareNaiveBayesLeftRight, window_size=i)
+  print 'OptionAwareNaiveBayesLeftRight\t%s\t-\t%f' % (i, agreement)
+
+for i in range(10):
+  for j in range(10):
+    agreement = get_mturk_classifier_agreement(args.ssc_file_path, 
+      args.vote_csv_file_path, models.OptionAwareNaiveBayesLeftRightCutoff, window_size=i, cutoff=j)
+    print 'OptionAwareNaiveBayesLeftRightCutoff\t%s\t%s\t%f' % (i, j, agreement)
+
+for i in range(20):
+  agreement = get_mturk_classifier_agreement(args.ssc_file_path,
+    args.vote_csv_file_path, models.OptionAwareNaiveBayesFullContextLeftRightCutoff, cutoff=i)
+  print 'OptionAwareNaiveBayesFullContextLeftRightCutoff\t-\t%s\t%f' % (i, agreement)
+  
