@@ -89,7 +89,7 @@ def get_accuracy_progression(train_test_set, classifier_to_measure, annotations,
   pool_annotations, test_annotations, pool_labels, test_labels = train_test_set
   accuracy_progression = np.zeros(len(pool_annotations) + 1)
 
-  learner = learner_class(classifier_to_measure, pool_annotations, pool_labels, target_weight = 1000)
+  learner = learner_class(classifier_to_measure, pool_annotations, pool_labels, target_weight = target_weight)
 
   # initialize the accuracy list with the initial accuracy
   accuracy_progression[0] = get_agreement(learner.classifier, (test_annotations, test_labels))
@@ -107,7 +107,7 @@ annotations_loaded, labels_loaded = load_ambiguous_annotations_labeled(annotatio
 
 n_simulations = 100
 test_size = 0.33
-target_weight = 1000
+target_weight = 10
 
 pool, _, _, _ = train_test_split(annotations_loaded, labels_loaded, test_size = test_size) 
 n_iterations = len(pool) + 1
