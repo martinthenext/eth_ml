@@ -15,6 +15,7 @@ import models
 import numpy as np
 from sklearn.externals import joblib
 import argparse
+from cv import CountPrinter
 
 def get_agreement(classifier, mturk_labeled_data):
   # read mturk annotations 
@@ -49,11 +50,6 @@ parser.add_argument("vote_csv_file_path")
 
 args = parser.parse_args()
 
-print 'OptionAwareNaiveBayesFullContextLeftRightCutoff(9)', get_mturk_classifier_agreement(
-  args.ssc_file_path, args.vote_csv_file_path,
-  models.OptionAwareNaiveBayesFullContextLeftRightCutoff, cutoff=9
-) 
-
 print "sep=\t"
 for i in range(10):
   agreement = get_mturk_classifier_agreement(args.ssc_file_path,
@@ -70,4 +66,3 @@ for i in range(20):
   agreement = get_mturk_classifier_agreement(args.ssc_file_path,
     args.vote_csv_file_path, models.OptionAwareNaiveBayesFullContextLeftRightCutoff, cutoff=i)
   print 'OptionAwareNaiveBayesFullContextLeftRightCutoff\t-\t%s\t%f' % (i, agreement)
-  
