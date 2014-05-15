@@ -133,3 +133,7 @@ OptionAwareNaiveBayesFullContextLeftRightCutoff	-	30	-	0.634078
 OptionAwareNaiveBayesFullContextLeftRightCutoff	-	50	-	0.634078
 OptionAwareNaiveBayesFullContextLeftRightCutoff	-	100	-	0.639665
 OptionAwareNaiveBayesFullContextLeftRightCutoff	-	0.01	-	0.497207
+OptionAwareNaiveBayesFullContextLeftRightCutoff	-	300	-	0.631285
+OptionAwareNaiveBayesFullContextLeftRightCutoff	-	500	-	0.622905
+OptionAwareNaiveBayesFullContextLeftRightCutoff	-	1000	-	0.620112
+
