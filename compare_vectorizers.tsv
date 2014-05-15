@@ -1,4 +1,4 @@
-Classifier	agreement	with	Mturk	Window	size	Word	frequency	cut-off	Agreement	when	trained	on	EMEA	Agreement	when	trained	on	Medline
+Classifier agreement with Mturk	Window size	Word frequency cut-off	Agreement when trained on EMEA	Agreement when trained on Medline
 OptionAwareNaiveBayesLeftRight	0	-	0.500000	0.522346
 OptionAwareNaiveBayesLeftRight	1	-	0.502793	0.539106
 OptionAwareNaiveBayesLeftRight	2	-	0.541899	0.547486
