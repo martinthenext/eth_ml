@@ -144,6 +144,11 @@ The Medline results are the same as =OptionAwareNaiveBayesFullContext= without c
 
 [[http://davtyan.org/pml/feature-chart.png]]
 
+**Re-evaluation** Results have been evaluated on a new dataset and changed significantly, see [[compare_vectorizers.tsv][here]]. The best classifier now is
+
+|Classifier|Window size|Word frequency cut-off|Agreement when trained on EMEA|Agreement when trained on Medline|
+|OptionAwareNaiveBayesLeftRightCutoff|5|9|58.3%|67.0%|
+
 * Self-contained MTurk classification
 
 Experiment: train =OptionAwareNaiveBayesLeftRight= classifier purely on MTurk labeled data and perform leave-one-out cross-validation.
