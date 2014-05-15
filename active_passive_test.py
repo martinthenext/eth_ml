@@ -7,7 +7,8 @@ and measures the progression of accuracy
 
 ARGUMENT 1: Pickle of the transfer learning classifier
 ARGUMENT 2: CSV file of Mturk majority vote annotations as produced by 
-      https://kitt.cl.uzh.ch/kitt/mantracrowd/disambig/vote_results.csv?AgreementThr=0.6
+      https://kitt.cl.uzh.ch/kitt/mantracrowd/disambig/vote_results.csv?AgreementThr=0.75
+ARGUMENT 3: File to plot curves to
 
 '''
 
@@ -23,9 +24,6 @@ from sklearn.externals import joblib
 import random
 import plot_curves
 from cv import CountPrinter
-
-classifier_pickle_filename = sys.argv[1]
-annotations_labeled_filename = sys.argv[2]
 
 def get_classifier_agreement_increase_table(target_weight_list, n_simulations = 1000):
   agreement_before = np.zeros(n_simulations)
@@ -100,40 +98,52 @@ def get_accuracy_progression(train_test_set, classifier_to_measure, annotations,
 
   return accuracy_progression
 
-# Setting up the experiment
+PLOT_FOLDER = 'plots/'
+CLASSIFIER_PICKLE_FOLDER = 'pickles.nobackup/'
+ANNOTATIONS_LABELED_FILENAME = '../vote_results_thr0.75-new6.csv'
 
-classifier_loaded = joblib.load(classifier_pickle_filename)
-annotations_loaded, labels_loaded = load_ambiguous_annotations_labeled(annotations_labeled_filename)
+def plot_learning_curves(classifier_pickle_filename, target_weight=1000, n_simulations=100, test_size=0.33):
 
-n_simulations = 100
-test_size = 0.33
-target_weight = 10
+  classifier_loaded = joblib.load(CLASSIFIER_PICKLE_FOLDER + classifier_pickle_filename)
+  annotations_loaded, labels_loaded = load_ambiguous_annotations_labeled(ANNOTATIONS_LABELED_FILENAME)
 
-pool, _, _, _ = train_test_split(annotations_loaded, labels_loaded, test_size = test_size) 
-n_iterations = len(pool) + 1
+  pool, _, _, _ = train_test_split(annotations_loaded, labels_loaded, test_size = test_size) 
+  n_iterations = len(pool) + 1
 
-passive_accuracy = np.zeros((n_simulations, n_iterations))
-active_accuracy = np.zeros((n_simulations, n_iterations))
+  passive_accuracy = np.zeros((n_simulations, n_iterations))
+  active_accuracy = np.zeros((n_simulations, n_iterations))
 
-counter = CountPrinter(n_simulations)
+  counter = CountPrinter(n_simulations)
 
-for run_number in range(n_simulations):
-  # securing statelessness
-  classifier = deepcopy(classifier_loaded)
-  annotations= deepcopy(annotations_loaded)
-  labels = deepcopy(labels_loaded)
+  for run_number in range(n_simulations):
+    # securing statelessness
+    classifier = deepcopy(classifier_loaded)
+    annotations= deepcopy(annotations_loaded)
+    labels = deepcopy(labels_loaded)
 
-  train_test_set = train_test_split(annotations, labels, test_size = test_size) 
+    train_test_set = train_test_split(annotations, labels, test_size = test_size) 
 
-  passive_accuracy[run_number] = get_accuracy_progression(
-    train_test_set, classifier, annotations, labels, target_weight, PassiveLearner)
-  active_accuracy[run_number] = get_accuracy_progression(
-    train_test_set, classifier, annotations, labels, target_weight, UncertaintySamplingLeastConfidenceActiveLearner)
+    passive_accuracy[run_number] = get_accuracy_progression(
+      train_test_set, classifier, annotations, labels, target_weight, PassiveLearner)
+    active_accuracy[run_number] = get_accuracy_progression(
+      train_test_set, classifier, annotations, labels, target_weight, UncertaintySamplingLeastConfidenceActiveLearner)
 
-  counter.count()
+    counter.count()
 
-passive_avg_accuracy_progression = np.mean(passive_accuracy, axis=0)
-active_avg_accuracy_progression = np.mean(active_accuracy, axis=0)
+  passive_avg_accuracy_progression = np.mean(passive_accuracy, axis=0)
+  active_avg_accuracy_progression = np.mean(active_accuracy, axis=0)
 
-plot_curves.plot_curves(sys.argv[3], title="Average iteration accuracy for %s simulations" % n_simulations,
- PassiveLearner=passive_avg_accuracy_progression, ActiveLearner=active_avg_accuracy_progression)
+  plot_filename = PLOT_FOLDER + classifier_pickle_filename + '_weight' + str(target_weight)
+
+  plot_curves.plot_curves(plot_filename, title="Average iteration accuracy for %s simulations" % n_simulations,
+   PassiveLearner=passive_avg_accuracy_progression, ActiveLearner=active_avg_accuracy_progression)
+
+
+classifiers_to_plot = [
+  'WeightedPartialFitPassiveTransferClassifier2_Medline', 
+  'WeightedPartialFitPassiveTransferClassifier2_Medline_fraction0.05',
+  'WeightedPartialFitPassiveTransferClassifier2_Medline_fraction0.01',
+  'WeightedPartialFitPassiveTransferClassifier2_Medline_fraction0.1',
+]
+
+joblib.Parallel(n_jobs=4)(joblib.delayed(plot_learning_curves)(classifier, 1000) for classifier in classifiers_to_plot)
