@@ -44,7 +44,7 @@ Active learning strategy: pick the instance from a pool which has the least esti
 The classifier was trained on unambiguous annotations first (Medline or EMEA corpora). Then 100 times:
 
 1. MTurk annotation set was split into train set and validation set
-2. Classifier was trained on train set, one example at a time (passively or actively)
+2. Classifier was trained on train set, one example at a time (passively or actively) with a weight 1000
 3. For every iteration accuracy on validation set was measured
 
 ### Medline
@@ -56,3 +56,7 @@ As previous results show, accuracy for Medline is high enough that training on M
 ### EMEA
 
 ![](http://davtyan.org/pml/EMEA_weight1000_avg100.png)
+
+## Partial data
+
+For the purpose of learning optimal balance between source and target datasets, we train the classifier on fractions of source dataset. This is implemented not by talking first `N%` of a dataset, but by skipping datapoints to avoid possible bias problems.
