@@ -59,6 +59,12 @@ class WeightedPartialFitPassiveTransferClassifier(object):
     return numpy.array([self.get_max_probability(annotation, row)
       for row, annotation in itertools.izip(probs, annotations)])
 
+# New classifier optimal on Medline
+class WeightedPartialFitPassiveTransferClassifier2(WeightedPartialFitPassiveTransferClassifier):
+  def __init__(self, target_weight):
+    self.classifier = MultinomialNB()
+    self.target_weight = target_weight
+    self.vectorizer = ContextRestrictedBagOfWordsLeftRightCutoff(5, 9)
 
 '''
 TODO:
