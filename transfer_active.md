@@ -73,7 +73,7 @@ We measure differences between accuracy before and after training on MTurk data 
 |500|-0.0057|
 |1000|-0.01|
 
-# Trained on 10% of Medline
+### Trained on 10% of Medline
 
 |Target Weight|Average gain|
 | --- | --- |
@@ -83,7 +83,7 @@ We measure differences between accuracy before and after training on MTurk data 
 |500|0.0094|
 |1000|-0.0008|
 
-# Trained on 1% of Medline
+### Trained on 1% of Medline
 
 |Target Weight|Average gain|
 | --- | --- |
