@@ -97,4 +97,8 @@ Example learning curve for target weight 10:
 
 ![](http://davtyan.org/pml/WeightedPartialFitPassiveTransferClassifier2_Medline_fraction0.01_weight10.png)
 
+Weight 100:
+
+![](http://davtyan.org/pml/WeightedPartialFitPassiveTransferClassifier2_Medline_fraction0.01_weight100.png)
+
 Although the quality increases, it does not reach the quality attained by training of full Medline dataset.

@@ -34,10 +34,16 @@ def get_mean_accuracy_gain(classifier_pickle_file, target_weight, n_runs):
 
   return np.mean(gains)
 
+'''
+
+TESTED: estimates are pretty stable
+
+'''
+
 weights = [10, 50, 100, 500, 1000]
 n_runs = 100
 mean_gains = Parallel(n_jobs=8)(
-  delayed(get_mean_accuracy_gain)('pickles.nobackup/WeightedPartialFitPassiveTransferClassifier2_Medline_fraction0.1', weight, n_runs) 
+  delayed(get_mean_accuracy_gain)('pickles.nobackup/WeightedPartialFitPassiveTransferClassifier2_Medline_fraction0.01', weight, n_runs) 
   for weight in weights
 )
 
