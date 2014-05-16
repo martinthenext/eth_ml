@@ -16,8 +16,7 @@ import sys
 from sklearn.externals import joblib
 import itertools
 
-def train_and_serialize(ssc_file_path, serialization_path, classifier_class, transfer=True, dataset_fraction=None, **kwargs):
-  unambig_annotations = data.load_unambiguous_annotations(ssc_file_path)
+def train_and_serialize(unambig_annotations, serialization_path, classifier_class, transfer=True, dataset_fraction=None, **kwargs):
   if dataset_fraction:
     step = int(1/dataset_fraction)
     train_set = itertools.islice(unambig_annotations, 0, None, step)
@@ -26,14 +25,18 @@ def train_and_serialize(ssc_file_path, serialization_path, classifier_class, tra
     train_set = unambig_annotations
   classifier = classifier_class(**kwargs)
   if transfer:
-    classifier.train_source(unambig_annotations)
+    classifier.train_source(train_set)
   else:
-    classifier.train(unambig_annotations)
+    classifier.train(train_set)
 
   joblib.dump(classifier, serialization_path)
 
+print 'loading annotations'
+unambig_annotations = data.load_unambiguous_annotations(sys.argv[1])
+print 'finished loading'
+
 def run(frac):
-  train_and_serialize(sys.argv[1], 'pickles.nobackup/WeightedPartialFitPassiveTransferClassifier2_Medline', 
+  train_and_serialize(unambig_annotations, 'pickles.nobackup/WeightedPartialFitPassiveTransferClassifier2_Medline', 
     transfer.WeightedPartialFitPassiveTransferClassifier2, dataset_fraction=frac)
   return None
 
