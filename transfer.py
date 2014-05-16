@@ -1,5 +1,5 @@
 from data import Annotation
-from models import FullContextBagOfWordsLeftRightCutoff
+from models import FullContextBagOfWordsLeftRightCutoff, ContextRestrictedBagOfWordsLeftRightCutoff
 import itertools
 import random
 from sklearn.naive_bayes import MultinomialNB
@@ -61,7 +61,7 @@ class WeightedPartialFitPassiveTransferClassifier(object):
 
 # New classifier optimal on Medline
 class WeightedPartialFitPassiveTransferClassifier2(WeightedPartialFitPassiveTransferClassifier):
-  def __init__(self, target_weight):
+  def __init__(self, target_weight=1000):
     self.classifier = MultinomialNB()
     self.target_weight = target_weight
     self.vectorizer = ContextRestrictedBagOfWordsLeftRightCutoff(5, 9)
