@@ -151,6 +151,10 @@ Results have been evaluated on a new dataset and changed significantly, see [[co
 |Classifier|Window size|Word frequency cut-off|Agreement when trained on EMEA|Agreement when trained on Medline|
 |OptionAwareNaiveBayesLeftRightCutoff|5|9|58.3%|67.0%|
 
+[[http://davtyan.org/pml/feature-chart-new.png]]
+
+As the new results don't show much of a difference between EMEA-optimal and Medline-optimal classifier in accuracy when trained on EMEA, we are going to use The Medline-optimal classifier from the table above.
+
 * Self-contained MTurk classification
 
 Experiment: train =OptionAwareNaiveBayesLeftRight= classifier purely on MTurk labeled data and perform leave-one-out cross-validation.
