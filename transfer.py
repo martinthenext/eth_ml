@@ -3,6 +3,7 @@ from models import FullContextBagOfWordsLeftRightCutoff, ContextRestrictedBagOfW
 import itertools
 import random
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.linear_model import SGDClassifier
 import numpy
 
 '''
@@ -90,6 +91,6 @@ would be impossible to form a proper dictionary
 '''
 class WeightedSVMPartialFitPassiveTransferClassifier(WeightedPartialFitPassiveTransferClassifier):
   def __init__(self, target_weight=1000):
-    self.classifier = linear_model.SGDClassifier()
+    self.classifier = SGDClassifier(loss='log')
     self.target_weight = target_weight
     self.vectorizer = FullContextBagOfWordsLeftRightCutoff(9)

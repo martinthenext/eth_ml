@@ -21,30 +21,30 @@ def get_accuracy_gain(loaded_classifier):
   classifier.train_target_online(pool_annotations, pool_labels)
   accuracy_after = get_agreement(classifier, (test_annotations, test_labels))
   
-  return (accuracy_after - accuracy_before)
+  return (accuracy_after, accuracy_before)
 
 def get_mean_accuracy_gain(classifier_pickle_file, target_weight, n_runs):
   loaded_classifier = load(classifier_pickle_file)
   loaded_classifier.target_weight = target_weight
 
+  accuracies_before = np.zeros(n_runs)
+  accuracies_after = np.zeros(n_runs)
   gains = np.zeros(n_runs)
 
   for i in range(n_runs):
-    gains[i] = get_accuracy_gain(loaded_classifier)
+    accuracy_before, accuracy_after = get_accuracy_gain(loaded_classifier)
+    accuracies_before[i] = accuracy_before
+    accuracies_after[i] = accuracy_after
+    gains[i] = accuracy_after - accuracy_before
 
-  return np.mean(gains)
+  return np.mean(accuracies_before), np.mean(accuracies_after), np.mean(gains)
 
-'''
-
-TESTED: estimates are pretty stable
-
-'''
-
-weights = [10, 50, 100, 500, 1000]
+weights = [10, 100, 500, 1000]
 n_runs = 100
-mean_gains = Parallel(n_jobs=8)(
-  delayed(get_mean_accuracy_gain)('pickles.nobackup/WeightedPartialFitPassiveTransferClassifier2_Medline_fraction0.01', weight, n_runs) 
+results = Parallel(n_jobs=4)(
+  delayed(get_mean_accuracy_gain)('pickles.nobackup/WeightedSVMPartialFitPassiveTransferClassifier_Medline', weight, n_runs) 
   for weight in weights
 )
 
-print zip(weights, mean_gains)
+for weight, result in zip(weights, results):
+  print '%s\t%s\t%s\t%s' % (weight, result[0], result[1], result[2])

@@ -120,3 +120,17 @@ Although the quality increases, it does not reach the quality attained by traini
 ![](http://davtyan.org/pml/WeightedPartialFitPassiveTransferClassifier2_Medline_fraction0.01_weight100.png)
 
 The resulting quality is comparable to the one of the full-dataset Medline classifier, given the fact that we only used 1% of dataset for training.
+
+# Using SVM classifier
+
+Using SVM classifier on bag of words with cutoff = 9 and using logistic loss. 
+
+### Trained on Medline
+
+|Target Weight|Average gain|
+| --- | --- |
+|10|0.006|
+|50|0.0308|
+|100|0.034|
+|500|0.02|
+|1000|0.018|
