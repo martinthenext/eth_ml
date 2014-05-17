@@ -57,6 +57,22 @@ As previous results show, accuracy for Medline is high enough that training on M
 
 ![](http://davtyan.org/pml/EMEA_weight1000_avg100.png)
 
+## Re-evaluation
+
+As the result of [re-evaluation](https://github.com/martinthenext/eth_ml/blob/master/results.org#re-evaluation) a new feature set was shown to be optimal for Medline. The active/passive learning graphs for it:
+
+**Weight 1000**
+
+![](http://davtyan.org/pml/WeightedPartialFitPassiveTransferClassifier2_Medline_weight1000.png)
+
+**Weight 100**
+
+![](http://davtyan.org/pml/WeightedPartialFitPassiveTransferClassifier2_Medline_weight100.png)
+
+**Weight 10**
+
+![](http://davtyan.org/pml/WeightedPartialFitPassiveTransferClassifier2_Medline_weight10.png)
+
 ## Partial data
 
 For the purpose of learning optimal balance between source and target datasets, we train the classifier on fractions of source dataset. This is implemented not by talking first `N%` of a dataset, but by skipping datapoints to avoid possible bias problems. Here we use `WeightedPartialFitPassiveTransferClassifier2` classifier (features optimal for Medline) trained on Medline.
@@ -93,13 +109,13 @@ We measure differences between accuracy before and after training on MTurk data 
 |500|0.02|
 |1000|0.018|
 
-Example learning curve for target weight 10:
+Example learning curve for target **Weight 10**
 
 ![](http://davtyan.org/pml/WeightedPartialFitPassiveTransferClassifier2_Medline_fraction0.01_weight10.png)
 
 Although the quality increases, it does not reach the quality attained by training of full Medline dataset.
 
-Weight 100:
+**Weight 100**
 
 ![](http://davtyan.org/pml/WeightedPartialFitPassiveTransferClassifier2_Medline_fraction0.01_weight100.png)
 
