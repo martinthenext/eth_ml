@@ -88,3 +88,8 @@ Target classifier should have the same vectorizer as source one, otherwize it
 would be impossible to form a proper dictionary
 
 '''
+class WeightedSVMPartialFitPassiveTransferClassifier(WeightedPartialFitPassiveTransferClassifier):
+  def __init__(self, target_weight=1000):
+    self.classifier = linear_model.SGDClassifier()
+    self.target_weight = target_weight
+    self.vectorizer = FullContextBagOfWordsLeftRightCutoff(9)
