@@ -94,3 +94,9 @@ class WeightedSVMPartialFitPassiveTransferClassifier(WeightedPartialFitPassiveTr
     self.classifier = SGDClassifier(loss='log')
     self.target_weight = target_weight
     self.vectorizer = FullContextBagOfWordsLeftRightCutoff(9)
+
+class WeightedSVMHuberPartialFitPassiveTransferClassifier(WeightedPartialFitPassiveTransferClassifier):
+  def __init__(self, target_weight=1000):
+    self.classifier = SGDClassifier(loss='modified_huber')
+    self.target_weight = target_weight
+    self.vectorizer = FullContextBagOfWordsLeftRightCutoff(9)

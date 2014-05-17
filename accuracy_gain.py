@@ -32,7 +32,7 @@ def get_mean_accuracy_gain(classifier_pickle_file, target_weight, n_runs):
   gains = np.zeros(n_runs)
 
   for i in range(n_runs):
-    accuracy_before, accuracy_after = get_accuracy_gain(loaded_classifier)
+    accuracy_after, accuracy_before = get_accuracy_gain(loaded_classifier)
     accuracies_before[i] = accuracy_before
     accuracies_after[i] = accuracy_after
     gains[i] = accuracy_after - accuracy_before
@@ -42,7 +42,7 @@ def get_mean_accuracy_gain(classifier_pickle_file, target_weight, n_runs):
 weights = [10, 100, 500, 1000]
 n_runs = 100
 results = Parallel(n_jobs=4)(
-  delayed(get_mean_accuracy_gain)('pickles.nobackup/WeightedSVMPartialFitPassiveTransferClassifier_Medline', weight, n_runs) 
+  delayed(get_mean_accuracy_gain)('pickles.nobackup/WeightedSVMHuberPartialFitPassiveTransferClassifier_Medline', weight, n_runs) 
   for weight in weights
 )
 

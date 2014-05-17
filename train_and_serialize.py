@@ -36,5 +36,5 @@ if __name__ == "__main__":
   unambig_annotations = data.load_unambiguous_annotations(sys.argv[1])
   print 'finished loading'
 
-  joblib.Parallel(n_jobs=4)( joblib.delayed(train_and_serialize)(unambig_annotations, 'pickles.nobackup/WeightedPartialFitPassiveTransferClassifier2_EMEA', 
-      transfer.WeightedPartialFitPassiveTransferClassifier2, True, frac) for frac in [None, 0.1, 0.05, 0.01] )
+  joblib.Parallel(n_jobs=3)( joblib.delayed(train_and_serialize)(unambig_annotations, 'pickles.nobackup/WeightedSVMHuberPartialFitPassiveTransferClassifier_Medline', 
+      transfer.WeightedSVMHuberPartialFitPassiveTransferClassifier, True, frac) for frac in [None, 0.1, 0.01] )
