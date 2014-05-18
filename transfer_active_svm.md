@@ -13,17 +13,17 @@ Using SVM classifier on bag of words with frequency cutoff = 9, window of size 5
 
 Using SVM classifier on bag of words with cutoff = 9 and using modified_huber. 
 
-**Weight 1000*
+**Weight 1000**
 
 ![](http://davtyan.org/pml/WeightedSVMPartialFitPassiveTransferClassifier_Medline_weight1000.png)
 
 
-**Weight 100*
+**Weight 100**
 
 ![](http://davtyan.org/pml/WeightedSVMPartialFitPassiveTransferClassifier_Medline_weight100.png)
 
 
-**Weight 10*
+**Weight 10**
 
 ![](http://davtyan.org/pml/WeightedSVMPartialFitPassiveTransferClassifier_Medline_weight10.png)
 
@@ -36,15 +36,14 @@ Using SVM classifier on bag of words with cutoff = 9 and using modified_huber.
 |500|55.6|53.6|0.02|
 |1000|55.6|52.7|0.028|
 
-**Weight 1000*
+**Weight 1000**
 
 ![](http://davtyan.org/pml/WeightedSVMHuberPartialFitPassiveTransferClassifier_Medline_weight1000.png)
 
-**Weight 100*
+**Weight 100**
 
 ![](http://davtyan.org/pml/WeightedSVMHuberPartialFitPassiveTransferClassifier_Medline_weight100.png)
 
-**Weight 10*
+**Weight 10**
 
 ![](http://davtyan.org/pml/WeightedSVMHuberPartialFitPassiveTransferClassifier_Medline_weight10.png)
-
