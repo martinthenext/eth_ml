@@ -5,10 +5,7 @@
 This file unpickles your transfer learning classifier, feeds training examples to it
 and measures the progression of accuracy
 
-ARGUMENT 1: Pickle of the transfer learning classifier
-ARGUMENT 2: CSV file of Mturk majority vote annotations as produced by 
-      https://kitt.cl.uzh.ch/kitt/mantracrowd/disambig/vote_results.csv?AgreementThr=0.75
-ARGUMENT 3: File to plot curves to
+See magic constants in the bottom
 
 '''
 
@@ -16,7 +13,6 @@ from mturk_classifier_agreement import get_agreement
 from data import load_ambiguous_annotations_labeled
 from sklearn.cross_validation import train_test_split
 import numpy as np
-import sys
 import itertools
 from copy import deepcopy
 # TODO make the deprecation warning go away
@@ -139,11 +135,8 @@ def plot_learning_curves(classifier_pickle_filename, target_weight=1000, n_simul
    PassiveLearner=passive_avg_accuracy_progression, ActiveLearner=active_avg_accuracy_progression)
 
 
-classifiers_to_plot = [
-  'WeightedPartialFitPassiveTransferClassifier2_Medline', 
-  'WeightedPartialFitPassiveTransferClassifier2_Medline_fraction0.05',
-  'WeightedPartialFitPassiveTransferClassifier2_Medline_fraction0.01',
-  'WeightedPartialFitPassiveTransferClassifier2_Medline_fraction0.1',
-]
+classifiers = ['WeightedSVMPartialFitPassiveTransferClassifier_Medline', 'WeightedSVMHuberPartialFitPassiveTransferClassifier_Medline']
+weights = [10, 100, 1000]
+combinations = list(itertools.product(classifiers, weights))
 
-joblib.Parallel(n_jobs=4)(joblib.delayed(plot_learning_curves)(classifier, 1000) for classifier in classifiers_to_plot)
+joblib.Parallel(n_jobs=len(combinations))(joblib.delayed(plot_learning_curves)(classifier, weight) for classifier, weight in combinations)
