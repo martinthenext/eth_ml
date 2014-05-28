@@ -101,10 +101,10 @@ class WeightedSVMHuberPartialFitPassiveTransferClassifier(WeightedPartialFitPass
     self.target_weight = target_weight
     self.vectorizer = FullContextBagOfWordsLeftRightCutoff(9)
 
-class CombinedProbTransferClassifier(object):
+class CombinedProbTransferClassifier(WeightedPartialFitPassiveTransferClassifier):
   def __init__(self, target_weight=0.5):
     self.source_classifier = MultinomialNB()
-    self.target_classifier = MultinomialNB()
+    self.target_classifier = MultinomialNB(fit_prior=False)
     self.beta = target_weight
     self.vectorizer = FullContextBagOfWordsLeftRightCutoff(9)
 
@@ -114,7 +114,8 @@ class CombinedProbTransferClassifier(object):
     y = numpy.array([annotation.get_group_number() for annotation in annotations])
 
     self.source_classifier.fit(X, y)
-
+    self.target_classifier.fit(X, y, sample_weight=0)
+ 
   # Train on ambiguous annotations with according group labels
   def train_target_online(self, annotations, labels):
     X = self.vectorizer.transform(annotations)
@@ -130,20 +131,6 @@ class CombinedProbTransferClassifier(object):
 
     return numpy.array([self.get_group_number(annotation, row)
      for row, annotation in itertools.izip(combined_prob, annotations)])
-
-  def get_group_number_prob_pair(self, annotation, prob_vector):
-    group_option_indices = annotation.get_group_number()
-    group_option_prob = [prob_vector[group_option_index] for group_option_index in group_option_indices]
-    return max(zip(group_option_indices, group_option_prob), key = lambda (index, prob): prob)
- 
-  def get_group_number(self, annotation, prob_vector):
-    group_index, _ = self.get_group_number_prob_pair(annotation, prob_vector)
-    return group_index
-
-  # tested, results for the classifier trained on source are not random
-  def get_max_probability(self, annotation, prob_vector):
-    _, prob = self.get_group_number_prob_pair(annotation, prob_vector)
-    return prob
 
   def get_prob_estimates(self, annotations):
     X = self.vectorizer.transform(annotations)
