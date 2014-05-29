@@ -102,10 +102,10 @@ class WeightedSVMHuberPartialFitPassiveTransferClassifier(WeightedPartialFitPass
     self.vectorizer = FullContextBagOfWordsLeftRightCutoff(9)
 
 class CombinedProbTransferClassifier(WeightedPartialFitPassiveTransferClassifier):
-  def __init__(self, target_weight=0.5):
+  def __init__(self, beta=0.5):
     self.source_classifier = MultinomialNB()
     self.target_classifier = MultinomialNB(fit_prior=False)
-    self.beta = target_weight
+    self.beta = beta
     self.vectorizer = FullContextBagOfWordsLeftRightCutoff(9)
 
   # Train on unambiguous annotatios which have a group number

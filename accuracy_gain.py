@@ -23,9 +23,10 @@ def get_accuracy_gain(loaded_classifier):
   
   return (accuracy_after, accuracy_before)
 
-def get_mean_accuracy_gain(classifier_pickle_file, target_weight, n_runs):
+def get_mean_accuracy_gain(classifier_pickle_file, n_runs, **kwargs):
   loaded_classifier = load(classifier_pickle_file)
-  loaded_classifier.target_weight = target_weight
+  for k, v in kwargs.items():
+    loaded_classifier.__dict__[k] = v
 
   accuracies_before = np.zeros(n_runs)
   accuracies_after = np.zeros(n_runs)
@@ -39,12 +40,12 @@ def get_mean_accuracy_gain(classifier_pickle_file, target_weight, n_runs):
 
   return np.mean(accuracies_before), np.mean(accuracies_after), np.mean(gains)
 
-weights = [10, 100, 500, 1000]
+betas = [0.95, 0.97, 0.99, 0.995, 0.999]
 n_runs = 100
-results = Parallel(n_jobs=4)(
-  delayed(get_mean_accuracy_gain)('pickles.nobackup/WeightedSVMHuberPartialFitPassiveTransferClassifier_Medline', weight, n_runs) 
-  for weight in weights
+results = Parallel(n_jobs=5)(
+  delayed(get_mean_accuracy_gain)('pickles.nobackup/CombinedProbTransferClassifier_Medline', n_runs, beta=beta) 
+  for beta in betas
 )
 
-for weight, result in zip(weights, results):
-  print '%s\t%s\t%s\t%s' % (weight, result[0], result[1], result[2])
+for beta, result in zip(betas, results):
+  print '%s\t%s\t%s\t%s' % (beta, result[0], result[1], result[2])
