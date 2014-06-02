@@ -51,6 +51,25 @@ parser.add_argument("vote_csv_file_path")
 args = parser.parse_args()
 
 print "sep=\t"
+# random forest experiments
+for num_trees in range(20, 110, 20):
+  for i in range(10):
+    agreement = get_mturk_classifier_agreement(args.ssc_file_path,
+     args.vote_csv_file_path, models.OptionAwareRandomForestLeftRight, num_trees=num_trees, window_size=i)
+    print 'OptionAwareRandomForestLeftRight\t%s\t%s\t-\t%f' % (num_trees, i, agreement)
+
+  for i in range(10):
+    for j in range(10):
+      agreement = get_mturk_classifier_agreement(args.ssc_file_path, 
+        args.vote_csv_file_path, models.OptionAwareRandomForestLeftRightCutoff, num_trees=num_trees, window_size=i, cutoff=j)
+      print 'OptionAwareRandomForestLeftRightCutoff\t%s\t%s\t%s\t%f' % (num_trees, i, j, agreement)
+
+  for i in range(20):
+    agreement = get_mturk_classifier_agreement(args.ssc_file_path,
+      args.vote_csv_file_path, models.OptionAwareRandomForestFullContextLeftRightCutoff, num_trees=num_trees, cutoff=i)
+    print 'OptionAwareRandomForestFullContextLeftRightCutoff\t%s\t-\t%s\t%f' % (num_trees, i, agreement)
+
+# Naive Bayes experiments
 for i in range(10):
   agreement = get_mturk_classifier_agreement(args.ssc_file_path,
    args.vote_csv_file_path, models.OptionAwareNaiveBayesLeftRight, window_size=i)
@@ -66,3 +85,4 @@ for i in range(20):
   agreement = get_mturk_classifier_agreement(args.ssc_file_path,
     args.vote_csv_file_path, models.OptionAwareNaiveBayesFullContextLeftRightCutoff, cutoff=i)
   print 'OptionAwareNaiveBayesFullContextLeftRightCutoff\t-\t%s\t%f' % (i, agreement)
+

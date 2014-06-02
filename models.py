@@ -11,6 +11,7 @@ from scipy import sparse
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 import itertools
 
 from data import Annotation
@@ -100,7 +101,7 @@ class ContextRestrictedBagOfWordsLeftRight(ContextRestrictedBagOfWords):
     context_strings_right = [self.get_restricted_context_str_right(annotation)
      for annotation in annotations]
     return sparse.hstack( (self.vectorizer.transform(context_strings_left),
-      self.vectorizer.transform(context_strings_right)) )
+      self.vectorizer.transform(context_strings_right)) ).toarray()
 
   def transform(self, annotations):
     context_strings_left = [self.get_restricted_context_str_left(annotation)
@@ -108,7 +109,7 @@ class ContextRestrictedBagOfWordsLeftRight(ContextRestrictedBagOfWords):
     context_strings_right = [self.get_restricted_context_str_right(annotation)
      for annotation in annotations]
     return sparse.hstack( (self.vectorizer.transform(context_strings_left),
-      self.vectorizer.transform(context_strings_right) ))
+      self.vectorizer.transform(context_strings_right) )).toarray()
 
 class ContextRestrictedBagOfWordsLeftRightCutoff(ContextRestrictedBagOfWordsLeftRight):
   def __init__(self, window_size, min_df):
@@ -243,7 +244,7 @@ class FullContextBagOfWordsLeftRight(FullContextVectorizer):
       self.vectorizer.fit(full_contexts)
     X_left = self.vectorizer.transform(left_contexts)
     X_right = self.vectorizer.transform(right_contexts)
-    return sparse.hstack((X_left, X_right))
+    return sparse.hstack((X_left, X_right)).toarray()
 
   def transform(self, annotations):
     return self.fit_transform(annotations, fit=False)
@@ -264,3 +265,26 @@ class OptionAwareNaiveBayesFullContextLeftRightCutoff(OptionAwareNaiveBayes):
     cutoff = kwargs.get('cutoff', 3)
     self.vectorizer = FullContextBagOfWordsLeftRightCutoff(cutoff)
 
+## Random Forest classifiers
+
+class OptionAwareRandomForestLeftRight(OptionAwareNaiveBayes):
+  def __init__(self, **kwargs):
+    num_trees = kwargs.get('num_trees', 50)
+    self.classifier = RandomForestClassifier(n_estimators=num_trees)
+    window_size = kwargs.get('window_size', 3)
+    self.vectorizer = ContextRestrictedBagOfWordsLeftRight(window_size)
+
+class OptionAwareRandomForestLeftRightCutoff(OptionAwareNaiveBayes):
+  def __init__(self, **kwargs):
+    num_trees = kwargs.get('num_trees', 50)
+    self.classifier = RandomForestClassifier(n_estimators=num_trees)
+    window_size = kwargs.get('window_size', 3)
+    cutoff = kwargs.get('cutoff', 3)
+    self.vectorizer = ContextRestrictedBagOfWordsLeftRightCutoff(window_size, cutoff)
+
+class OptionAwareRandomForestFullContextLeftRightCutoff(OptionAwareNaiveBayes):
+  def __init__(self, **kwargs):
+    num_trees = kwargs.get('num_trees', 50)
+    self.classifier = RandomForestClassifier(n_estimators=num_trees)
+    cutoff = kwargs.get('cutoff', 3)
+    self.vectorizer = FullContextBagOfWordsLeftRightCutoff(cutoff)
