@@ -53,11 +53,25 @@ if __name__ == "__main__":
       # Excluding groups of size 1 - they are not conflicting
       conflicting_annotation_groups = filter(lambda l: len(l) > 1, conflicting_annotation_groups)
 
-      # Grouping conflicting annotations by 'grp' for group ambiguity
+      # Continue if the unit does not have conflicting annotations
       if not conflicting_annotation_groups:
         continue
 
-      print 'unit'
-      for x in conflicting_annotation_groups:
-        for y in x:
-          print x
+      for conflicting_annotation_group in conflicting_annotation_groups:
+        # Group the conflicting annotation list by 'grp'
+        grp_key = lambda a: a.grp
+        # Taking one element from group because they are similar except for CUIs
+        ambiguous_annotations = [list(group)[0] for key, group
+          in itertools.groupby(sorted(conflicting_annotation_group), key=grp_key)]
+
+        if len(ambiguous_annotations) <= 1:
+          continue
+
+        # Getting probabilities from the classifier
+        ambiguous_groups = [a.grp for a in ambiguous_annotations]
+
+        to_classify = ambiguous_annotations[0]
+        X = classifier.vectorizer.transform([to_classify])
+        probabilities = classifier.classifier.predict_proba(X)
+
+        
