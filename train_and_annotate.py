@@ -4,6 +4,8 @@ import argparse
 import data
 import models
 from sklearn.externals import joblib
+from lxml import etree
+import itertools
 
 CLASSIFIER_PICKE_DIR = 'pickles.nobackup/'
 
@@ -17,13 +19,32 @@ if __name__ == "__main__":
   parser.add_argument('-a', '--annotate', type=str)
   args = parser.parse_args()
 
-  annotations = []
-  for ssc_file in args.train:
-    annotations += data.load_unambiguous_annotations(ssc_file)
-
-  classifier = models.OptionAwareNaiveBayesLeftRightCutoff(window_size = 5, cutoff = 9)
-  classifier.train(annotations)
-
+  # Check if there is an appropriate pickle already just load it instead of training
   classifier_filename = get_classifier_serialization_filename('NaiveBayesWsCo9', args.train)
-  joblib.dump(classifier, serialization_path)
+  classifier_path = CLASSIFIER_PICKE_DIR + classifier_filename
+  try:
+    classifier = joblib.load(classifier_path)
+    print 'classifier loaded from pickle'
+  except IOError:
+    # Load annotations
+    annotations = []
+    for ssc_file in args.train:
+      annotations += data.load_unambiguous_annotations(ssc_file)    
+    # Train the classifier
+    classifier = models.OptionAwareNaiveBayesLeftRightCutoff(window_size = 5, cutoff = 9)
+    classifier.train(annotations)
+    # Picke the classifier
+    joblib.dump(classifier, CLASSIFIER_PICKE_DIR + classifier_filename)
 
+  # SSC XML
+  parser = etree.XMLParser(encoding='utf-8')
+  ssc = etree.parse(args.annotate, parser).getroot()
+
+  for document in ssc.iter("document"):
+    for unit in document.iter("unit"):
+      unit_text = unit.find("text").text
+
+      non_empty_e = itertools.ifilter(lambda e: e.text is not None, unit.iter("e"))
+      annotations = [data.Annotation(e, unit_text) for e in non_empty_e]
+      
+      

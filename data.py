@@ -66,6 +66,9 @@ class Annotation(object):
   def get_highlighted_repr(self):
     return "%s[[%s]]%s" % self.get_slices()
 
+  def __unicode__(self):
+    return self.get_highlighted_repr()
+
   def get_context_string(self):
     context_before, _, context_after = self.get_slices()
     return context_before + context_after
