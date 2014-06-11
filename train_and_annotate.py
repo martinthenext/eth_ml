@@ -46,5 +46,18 @@ if __name__ == "__main__":
 
       non_empty_e = itertools.ifilter(lambda e: e.text is not None, unit.iter("e"))
       annotations = [data.Annotation(e, unit_text) for e in non_empty_e]
-      
-      
+
+      conflicting_annotation_groups = [list(group) for key, group 
+        in itertools.groupby(sorted(annotations, key=hash), key=hash)]      
+
+      # Excluding groups of size 1 - they are not conflicting
+      conflicting_annotation_groups = filter(lambda l: len(l) > 1, conflicting_annotation_groups)
+
+      # Grouping conflicting annotations by 'grp' for group ambiguity
+      if not conflicting_annotation_groups:
+        continue
+
+      print 'unit'
+      for x in conflicting_annotation_groups:
+        for y in x:
+          print x
