@@ -5,7 +5,12 @@ import data
 import models
 from sklearn.externals import joblib
 from lxml import etree
+import sys
+import codecs
 import itertools
+
+sys.stdout = codecs.getwriter('utf-8')(sys.__stdout__)
+sys.stderr = codecs.getwriter('utf-8')(sys.__stderr__)
 
 CLASSIFIER_PICKE_DIR = 'pickles.nobackup/'
 
@@ -17,6 +22,7 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument('-t', '--train', nargs='+', type=str)
   parser.add_argument('-a', '--annotate', type=str)
+  parser.add_argument('-o', '--output', type=str)
   args = parser.parse_args()
 
   # Check if there is an appropriate pickle already just load it instead of training
@@ -38,7 +44,8 @@ if __name__ == "__main__":
 
   # SSC XML
   parser = etree.XMLParser(encoding='utf-8')
-  ssc = etree.parse(args.annotate, parser).getroot()
+  tree = etree.parse(args.annotate, parser)
+  ssc = tree.getroot()
 
   for document in ssc.iter("document"):
     for unit in document.iter("unit"):
@@ -67,11 +74,20 @@ if __name__ == "__main__":
         if len(ambiguous_annotations) <= 1:
           continue
 
-        # Getting probabilities from the classifier
         ambiguous_groups = [a.grp for a in ambiguous_annotations]
 
+        # Getting probabilities from the classifier
         to_classify = ambiguous_annotations[0]
         X = classifier.vectorizer.transform([to_classify])
-        probabilities = classifier.classifier.predict_proba(X)
+        probabilities = classifier.classifier.predict_proba(X)[0]
 
-        
+        # Go through all conflicting_annotation_group list and add
+        # probabilities of their 'grp' attributes
+        for annotation in conflicting_annotation_group:
+          # Find out the probability of its group
+          group_index = data.Annotation.GROUP_MAPPING[annotation.grp]
+
+          probability = probabilities[group_index]
+          annotation.e.attrib['prob'] = str(probability)
+
+  tree.write(args.output, encoding='utf-8', pretty_print=True)
