@@ -11,7 +11,7 @@ import re
 ''' Annotation container class. Supply kwargs to initialize class fields by name
 '''
 class Annotation(object):
-  __slots__ = ('len', 'offset', 'grp', 'text', 'unit_text')
+  __slots__ = ('len', 'offset', 'grp', 'text', 'unit_text', 'e')
   
   def __init__(self, e_element=None, unittext=None, **kwargs):
     # initialization from kwargs
@@ -24,6 +24,7 @@ class Annotation(object):
       self.offset = e_element.attrib['offset']
       self.grp = e_element.attrib['grp'] # if multiple groups, separated by |
       self.text = e_element.text.lower()
+      self.e = e_element
 
       self.unit_text = unittext 
 
