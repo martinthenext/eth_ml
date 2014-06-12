@@ -18,6 +18,10 @@ def get_classifier_serialization_filename(classifier_name, ssc_file_list):
   corpus_codes = [sss_file_name.split('/')[-1].split("-")[0] for sss_file_name in ssc_file_list]
   return '%s_trained_on_%s' % (classifier_name, '_'.join(corpus_codes))
 
+def write_to_log(unit_id, text, prob_dict):
+  row = [unit_id, text] + list(itertools.chain.from_iterable(prob_dict.items()))
+  sys.stderr.write(u'#AMBIG\t' + '\t'.join(row) + '\n')
+
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument('-t', '--train', nargs='+', type=str)
@@ -47,6 +51,8 @@ if __name__ == "__main__":
   tree = etree.parse(args.annotate, parser)
   ssc = tree.getroot()
 
+  n_ambig_terms = 0
+
   for document in ssc.iter("document"):
     for unit in document.iter("unit"):
       unit_text = unit.find("text").text
@@ -74,6 +80,8 @@ if __name__ == "__main__":
         if len(ambiguous_annotations) <= 1:
           continue
 
+        n_ambig_terms += len(ambiguous_annotations)
+
         ambiguous_groups = [a.grp for a in ambiguous_annotations]
 
         # Getting probabilities from the classifier
@@ -81,13 +89,20 @@ if __name__ == "__main__":
         X = classifier.vectorizer.transform([to_classify])
         probabilities = classifier.classifier.predict_proba(X)[0]
 
+        group_probabilities = {}
+
         # Go through all conflicting_annotation_group list and add
         # probabilities of their 'grp' attributes
         for annotation in conflicting_annotation_group:
           # Find out the probability of its group
           group_index = data.Annotation.GROUP_MAPPING[annotation.grp]
 
-          probability = probabilities[group_index]
-          annotation.e.attrib['prob'] = str(probability)
+          probability_str = "%.2f" % probabilities[group_index]
+          annotation.e.attrib['grp_prob'] = probability_str
 
-  tree.write(args.output, encoding='utf-8', pretty_print=True)
+          group_probabilities[annotation.grp] = probability_str
+
+        write_to_log(unit.attrib['id'], to_classify.text, group_probabilities)
+
+  sys.stderr.write('#TOTAL AMBIG TERMS\t' + str(n_ambig_terms))
+  tree.write(args.output, xml_declaration=True, encoding='utf-8', pretty_print=True)
