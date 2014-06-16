@@ -33,16 +33,9 @@ Labeled data:
 3. Adaptive Submodularity: Theory and Applications in Active Learning and Stochastic Optimization. Golovin and Krause, 2011
 4. Near-optimal Batch Mode Active Learning and Adaptive Submodular Optimization. Chen and Krause, 2013
 
-## Roadmap
-
-1. Train the Naïve Bayes classifier to solve disambiguation tasks on non-ambiguous labeled data. Use bag of words or bag of bigrams on a context window around the ambiguous phrase. Experiment on what features work best. 
-2. Simulate active learning setting:
-  1. Pretend labeled data from MTurk is unlabeled and treat it a pool from which labels can be queried.
-  2. Abstract from the fact that we have multiple answers to one task: take majority vote of answers. Only consider answers with agreement level larger than 50%. This way we pretend for every task we can query a definite (correct) label.
-3. Use (adaptive) submodularity to implement pool-based active learning. Analyze classifier performance.
-4. Conditional: Implement batch-mode version of the algorithm
-5. Conditional: Switch from simulation to querying actual MTurk workers. Analyze classifier performance.
-
 ## Results
 
-See the constantly updated [summary of results](results.org).
+See [final report](http://davtyan.org/pml/final_report.pdf).
+
+Log of the results can be viewed [here](results.org).
+
