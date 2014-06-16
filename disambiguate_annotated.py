@@ -35,10 +35,9 @@ if __name__ == "__main__":
       # If the biggest probability is smaller than the cutoff, don't disambiguate
       if prob(best_prob_annotation) < float(args.cutoff):
         continue
-      # Delete all the <e> nodes from conflicting_annotations that are not best_prob_annotation
-      # TODO how do we want to handle the cases where two groups have the same prob?
+      # Delete all the <e> nodes from conflicting_annotations that are less probable that best_prob_annotation
       for annotation in conflicting_annotations:
-        if annotation != best_prob_annotation:
+        if prob(annotation) < prob(best_prob_annotation):
           annotation.getparent().remove(annotation)
     # print 'AFTER\n', etree.tostring(unit)
 
