@@ -24,7 +24,6 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument('-t', '--train', nargs='+', type=str)
   parser.add_argument('-a', '--annotate', type=str)
-  parser.add_argument('-o', '--output', type=str)
   args = parser.parse_args()
 
   annotations = []
@@ -96,5 +95,5 @@ if __name__ == "__main__":
 
         write_to_log(unit.attrib['id'], to_classify.text, group_probabilities)
 
-  sys.stderr.write('#TOTAL AMBIG TERMS\t' + str(n_ambig_terms))
-  tree.write(args.output, xml_declaration=True, encoding='utf-8', pretty_print=True)
+  sys.stderr.write('#TOTAL AMBIG TERMS\t' + str(n_ambig_terms) + '\n')
+  sys.stdout.write(etree.tostring(tree, pretty_print=True, encoding=unicode))
