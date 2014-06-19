@@ -1,5 +1,15 @@
 #!/usr/bin/env python
 
+'''
+
+Train a classifier on unambiguous annotations from corpora and then annotate 
+ambiguous cases from another corpus with group probabilities
+
+Output corpus: stdout
+Status messages: stderr
+
+'''
+
 import argparse
 import data
 import models
@@ -20,22 +30,37 @@ def write_to_log(unit_id, text, prob_dict):
   row = [unit_id, text] + list(itertools.chain.from_iterable(prob_dict.items()))
   sys.stderr.write(u'#AMBIG\t' + '\t'.join(row) + '\n')
 
+def get_unit_id_set(unit_id_file):
+  result = set()
+  with codecs.open(unit_id_file, 'r', 'utf-8') as f:
+    for line in f:
+      result.add(line[:-2])
+  return result
+
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument('-t', '--train', nargs='+', type=str)
   parser.add_argument('-a', '--annotate', type=str)
+  parser.add_argument('-e', '--exclude-unit-file', type=str)
+  parser.add_argument('-v', '--verbose', help="Output disambiguation table to stdout", action="store_true")
   args = parser.parse_args()
 
   annotations = []
   for ssc_file in args.train:
-    print 'loading annotations'
-    annotations += data.load_unambiguous_annotations(ssc_file)
+    sys.stderr.write('loading annotations\n')
+    # Load exlude unit IDs if any
+    if args.exclude_unit_file:
+      sys.stderr.write('reading ignore unit ids\n')
+      exclude_unit_ids = get_unit_id_set(args.exclude_unit_file)
+    else:
+      exclude_unit_ids = set()
+    annotations += data.load_unambiguous_annotations(ssc_file, exclude_unit_ids)
 
   classifier = models.OptionAwareNaiveBayesLeftRightCutoff(window_size = 5, cutoff = 9)
-  print 'training classifier'
+  sys.stderr.write('training classifier\n')
   classifier.train(annotations)
 
-  print 'processing probabilities'
+  sys.stderr.write('processing probabilities\n')
 
   # SSC XML
   parser = etree.XMLParser(encoding='utf-8')
@@ -93,7 +118,10 @@ if __name__ == "__main__":
 
           group_probabilities[annotation.grp] = probability_str
 
-        write_to_log(unit.attrib['id'], to_classify.text, group_probabilities)
+        if args.verbose:
+          write_to_log(unit.attrib['id'], to_classify.text, group_probabilities)
 
-  sys.stderr.write('#TOTAL AMBIG TERMS\t' + str(n_ambig_terms) + '\n')
+  if args.verbose:
+    sys.stderr.write('#TOTAL AMBIG TERMS\t' + str(n_ambig_terms) + '\n')
+ 
   sys.stdout.write(etree.tostring(tree, pretty_print=True, encoding=unicode))
