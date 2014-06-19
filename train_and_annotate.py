@@ -37,21 +37,34 @@ def get_unit_id_set(unit_id_file):
       result.add(line[:-2])
   return result
 
+def get_corpus_and_language(path):
+  if "/" in path:
+    path = path.split("/")[-1]
+
+  slices = path.split("_")
+  return slices[:2]
+
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument('-t', '--train', nargs='+', type=str)
   parser.add_argument('-a', '--annotate', type=str)
-  parser.add_argument('-e', '--exclude-unit-file', type=str)
-  parser.add_argument('-v', '--verbose', help="Output disambiguation table to stdout", action="store_true")
+  parser.add_argument('-e', '--exclude-unit-dir', type=str, 
+    help="Specify the exclude unit list folder with trailing slash if you want units excluded from training")
+  parser.add_argument('-v', '--verbose', 
+    help="Output disambiguation table to stdout", action="store_true")
   args = parser.parse_args()
 
   annotations = []
   for ssc_file in args.train:
     sys.stderr.write('loading annotations\n')
     # Load exlude unit IDs if any
-    if args.exclude_unit_file:
-      sys.stderr.write('reading ignore unit ids\n')
-      exclude_unit_ids = get_unit_id_set(args.exclude_unit_file)
+    if args.exclude_unit_dir:
+      # Figure out the filename of unit list
+      coprus_and_lang = get_corpus_and_language(ssc_file)
+      exclude_unit_path = args.exclude_unit_dir + "_".join(coprus_and_lang) + ".tsv"
+
+      sys.stderr.write('reading ignore unit ids: %s\n' % exclude_unit_path)
+      exclude_unit_ids = get_unit_id_set(exclude_unit_path)
     else:
       exclude_unit_ids = set()
     annotations += data.load_unambiguous_annotations(ssc_file, exclude_unit_ids)
