@@ -7,17 +7,21 @@ Disambiguation: for every ambiguous case pick the group with higher probability 
 import argparse
 from lxml import etree
 import itertools
+import sys
+import codecs
+
+sys.stdin = codecs.getreader('utf-8')(sys.__stdin__)
+sys.stdout = codecs.getwriter('utf-8')(sys.__stdout__)
+sys.stderr = codecs.getwriter('utf-8')(sys.__stderr__)
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
-  parser.add_argument('annotated', help='SSC file annotated with class probabilities')
-  parser.add_argument('output', help='Output file')
   parser.add_argument('-c', '--cutoff', help='Probability value that is enough to disambiguate, default is 0', default=0.0)
   args = parser.parse_args()
 
   # SSC XML
   parser = etree.XMLParser(encoding='utf-8')
-  tree = etree.parse(args.annotated, parser)
+  tree = etree.parse(sys.stdin, parser)
   ssc = tree.getroot()
 
   # XPath to select all units with e elements with prob attribute
@@ -41,4 +45,4 @@ if __name__ == "__main__":
           annotation.getparent().remove(annotation)
     # print 'AFTER\n', etree.tostring(unit)
 
-  tree.write(args.output, xml_declaration=True, encoding='utf-8', pretty_print=True)
+  sys.stdout.write(etree.tostring(tree, pretty_print=True, encoding=unicode))

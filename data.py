@@ -78,7 +78,7 @@ class Annotation(object):
 
 ''' Load unambiguous annotations from Silver Standard Corpus
 '''
-def load_unambiguous_annotations(ssc_file_name):
+def load_unambiguous_annotations(ssc_file_name, unit_ids_to_ignore=set()):
   # loading XMLs
   parser = etree.XMLParser(encoding='utf-8')
   ssc = etree.parse(ssc_file_name, parser).getroot()
@@ -87,6 +87,9 @@ def load_unambiguous_annotations(ssc_file_name):
 
   for document in ssc.iter("document"):
     for unit in document.iter("unit"):
+      if unit.attrib["id"] in unit_ids_to_ignore:
+        continue
+
       unit_text = unit.find("text").text
 
       non_empty_e_iter = itertools.ifilter(lambda e: e.text is not None, unit.iter("e"))
