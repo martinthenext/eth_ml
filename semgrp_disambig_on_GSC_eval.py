@@ -44,27 +44,13 @@ if __name__ == "__main__":
   with codecs.open(disambig_filename, 'w', 'utf-8') as f:
     f.write(out.decode('utf-8'))
 
-  # Run centroid
-  centroid_args = u" ".join(['java', '-cp', '~/lib/MantraAlign.jar', 'utils.Align', '-c', CENTROID_PROPERTIES_FILE, disambig_filename, disambig_filename])
-
-  proc = subprocess.Popen(centroid_args, stdout=subprocess.PIPE, shell=True)
-  sys.stderr.write('#STATUS Centroid\n')
-  out, err = proc.communicate()
-
-  temp_centroid_filename = TEMP_FILE_NAME + '_cent.xml'
-  with codecs.open(temp_centroid_filename, 'w', 'utf-8') as f:
-    f.write(out.decode('utf-8'))
-
-  # Tested: works with 
-  # java -cp ~/lib/MantraAlign.jar utils.Evaluate  -c ~/lib/c1-cui-best.properties /data/clmantra/reannotation.nobackup/man-gsc/nonen-gsc-c1-2014-05-12.d/EMEA_de_man.xml <OUT>
-
   # Figure out where the Gold Standard centroid for the annotated corpus lives
   gold_centroid_path = GOLD_CENTROID_DIR + corpus + '_' + language + '_man.xml'
   sys.stderr.write('#STATUS Gold centroid at %s\n' % gold_centroid_path)
-  sys.stderr.flush()
+  # sys.stderr.flush()
 
   # Run evaluate
-  evaluate_call = 'java -cp ~/lib/MantraAlign.jar utils.Evaluate -c %s %s %s' % (CENTROID_PROPERTIES_FILE, gold_centroid_path, temp_centroid_filename)
+  evaluate_call = 'java -cp ~/lib/MantraAlign.jar utils.Evaluate -c %s %s %s' % (CENTROID_PROPERTIES_FILE, gold_centroid_path, disambig_filename)
   proc = subprocess.Popen(evaluate_call, stdout=subprocess.PIPE, shell=True)
   sys.stderr.write('#STATUS Evaluate\n')
   out, err = proc.communicate()
@@ -74,7 +60,7 @@ if __name__ == "__main__":
     f.write(out.decode('utf-8'))
 
   # Run summary
-  temp_summary_filename = TEMP_FILE_NAME + '_summ.xml'
+  temp_summary_filename = TEMP_FILE_NAME + '_summ.html'
   summary_call = 'java -cp ~/lib/MantraAlign.jar  utils.SummaryStats %s %s' % (temp_eval_filename, temp_summary_filename)
   proc = subprocess.Popen(summary_call, stdout=subprocess.PIPE, shell=True)
   sys.stderr.write('#STATUS Summary\n')
