@@ -57,6 +57,7 @@ if __name__ == "__main__":
     help="Output disambiguation table to stdout", action="store_true")
   args = parser.parse_args()
 
+
   annotations = []
   for ssc_file in args.train:
     sys.stderr.write('loading annotations\n')
@@ -70,6 +71,7 @@ if __name__ == "__main__":
       exclude_unit_ids = get_unit_id_set(exclude_unit_path)
     else:
       exclude_unit_ids = set()
+
     annotations += data.load_unambiguous_annotations(ssc_file, exclude_unit_ids)
 
   classifier = models.OptionAwareNaiveBayesLeftRightCutoff(window_size = 5, cutoff = 9)
@@ -77,6 +79,15 @@ if __name__ == "__main__":
   classifier.train(annotations)
 
   sys.stderr.write('processing probabilities\n')
+
+  # If exclude folder is given, find a list of exclude units for the ANNOTATED
+  # file and only leave those
+  if args.exclude_unit_dir:
+    coprus_and_lang = get_corpus_and_language(args.annotate)
+    exclude_unit_path = args.exclude_unit_dir + "_".join(coprus_and_lang) + ".tsv"
+
+    sys.stderr.write('annotating and deleting all units except for %s\n' % exclude_unit_path)
+    units_to_leave = get_unit_id_set(exclude_unit_path)
 
   # SSC XML
   parser = etree.XMLParser(encoding='utf-8')
@@ -89,7 +100,7 @@ if __name__ == "__main__":
     for unit in document.iter("unit"):
       if args.exclude_unit_dir:
         # Delete all units if they are not EXCLUDE units
-        if unit.attrib["id"] not in exclude_unit_ids:
+        if unit.attrib["id"] not in units_to_leave:
           unit.getparent().remove(unit)
           continue
 
