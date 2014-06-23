@@ -84,6 +84,12 @@ if __name__ == "__main__":
 
   for document in ssc.iter("document"):
     for unit in document.iter("unit"):
+      if args.exclude_unit_dir:
+        # Delete all units if they are not EXCLUDE units
+        if unit.attrib["id"] not in unit_ids_to_ignore:
+          unit.getparent().remove(unit)
+          continue
+
       unit_text = unit.find("text").text
 
       non_empty_e = itertools.ifilter(lambda e: e.text is not None, unit.iter("e"))
