@@ -5,6 +5,9 @@
 Train a classifier on unambiguous annotations from corpora and then annotate 
 ambiguous cases from another corpus with group probabilities
 
+If exclude_unit_dir is specified, units are excluded from training and all other units are 
+deleted on the annotation step
+
 Output corpus: stdout
 Status messages: stderr
 
@@ -86,7 +89,7 @@ if __name__ == "__main__":
     for unit in document.iter("unit"):
       if args.exclude_unit_dir:
         # Delete all units if they are not EXCLUDE units
-        if unit.attrib["id"] not in unit_ids_to_ignore:
+        if unit.attrib["id"] not in exclude_unit_ids:
           unit.getparent().remove(unit)
           continue
 
@@ -139,6 +142,9 @@ if __name__ == "__main__":
 
         if args.verbose:
           write_to_log(unit.attrib['id'], to_classify.text, group_probabilities)
+
+    if not len(document):
+      document.getparent().remove(document)
 
   if args.verbose:
     sys.stderr.write('#TOTAL AMBIG TERMS\t' + str(n_ambig_terms) + '\n')
