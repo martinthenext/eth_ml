@@ -2,7 +2,9 @@
 *.csv
 *.png
 *.xml
+*.tsv
 results/temp
+results/
 
 # C extensions
 *.so
