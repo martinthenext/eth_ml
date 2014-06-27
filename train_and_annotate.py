@@ -56,6 +56,8 @@ if __name__ == "__main__":
     help="Specify the exclude unit list folder with trailing slash if you want units excluded from training")
   parser.add_argument('-v', '--verbose', 
     help="Output disambiguation table to stdout", action="store_true")
+  parser.add_argument('-s', '--stats', 
+    help="Output ambiguity statistics to stdout", action="store_true")
   args = parser.parse_args()
 
 
@@ -140,7 +142,7 @@ if __name__ == "__main__":
         n_ambig_terms += len(ambiguous_annotations)
 
         ambiguous_groups = [a.grp for a in ambiguous_annotations]
-        stats['|'.join(ambiguous_groups)] += 1
+        stats['|'.join(set(ambiguous_groups))] += 1
 
         # Getting probabilities from the classifier
         to_classify = ambiguous_annotations[0]
@@ -170,8 +172,9 @@ if __name__ == "__main__":
     sys.stderr.write('#TOTAL AMBIG TERMS\t' + str(n_ambig_terms) + '\n')
 
   # Ambiguous group statistics
-  for group_stat in stats.most_common():
-    sys.stderr.write('#STAT_CASES %s\t%s\n' % group_stat)
-  sys.stderr.write('#STAT_CASES Total\t%s\n' % sum(dict(stats).values()))
+  if args.stats:
+    for group_stat in stats.most_common():
+      sys.stderr.write('#STAT_CASES %s\t%s\n' % group_stat)
+    sys.stderr.write('#STAT_CASES Total\t%s\n' % sum(dict(stats).values()))
  
   sys.stdout.write(etree.tostring(tree, pretty_print=True, encoding=unicode))

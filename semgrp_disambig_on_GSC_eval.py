@@ -28,10 +28,11 @@ if __name__ == "__main__":
   corpus, language = get_corpus_and_language(args.annotation_corpus)
 
   # Run train_and_annotate.py
-  train_and_annotate_args = ['python', 'train_and_annotate.py', '-t'] + args.training_corpora + ['-a', args.annotation_corpus, '-e', args.exclude_unit_dir]
+  train_and_annotate_args = ['python', 'train_and_annotate.py', '-t'] + args.training_corpora + ['-a', args.annotation_corpus, '-e', args.exclude_unit_dir, '-s']
   proc = subprocess.Popen(train_and_annotate_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   sys.stderr.write('#STATUS Training a classifier and annotating ambiguous cases\n')
   out, err = proc.communicate()
+  sys.stderr.write(err)
 
   # Run disambiguate_annotated.py
   disambiguate_annotated_args = ['python', 'disambiguate_annotated.py', '-c', args.cutoff]
