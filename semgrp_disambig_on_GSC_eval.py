@@ -6,8 +6,8 @@ import subprocess
 import codecs
 import sys
 from train_and_annotate import get_corpus_and_language
+import datetime
 
-TEMP_FILE_NAME = 'tmp_semgrp_disambig'
 CENTROID_PROPERTIES_FILE = '~/lib/c1-cui-best.properties'
 GOLD_CENTROID_DIR = '/data/clmantra/reannotation.nobackup/man-gsc/nonen-gsc-c1-2014-05-12.d/'
 
@@ -26,6 +26,9 @@ if __name__ == "__main__":
 
   # Getting corpus type and language of annotated corpus for later use
   corpus, language = get_corpus_and_language(args.annotation_corpus)
+
+  # Setting unique temp name
+  TEMP_FILE_NAME = 'temp/' + str(datetime.datetime.now().time())
 
   # Run train_and_annotate.py
   train_and_annotate_args = ['python', 'train_and_annotate.py', '-t'] + args.training_corpora + ['-a', args.annotation_corpus, '-e', args.exclude_unit_dir, '-s']
