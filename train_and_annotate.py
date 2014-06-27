@@ -21,6 +21,7 @@ from lxml import etree
 import sys
 import codecs
 import itertools
+from collections import Counter
 
 sys.stdout = codecs.getwriter('utf-8')(sys.__stdout__)
 sys.stderr = codecs.getwriter('utf-8')(sys.__stderr__)
@@ -89,6 +90,9 @@ if __name__ == "__main__":
     sys.stderr.write('annotating and deleting all units except for %s\n' % exclude_unit_path)
     units_to_leave = get_unit_id_set(exclude_unit_path)
 
+  # Gathering statistics for ambiguous groups
+  stats = Counter()
+
   # SSC XML
   parser = etree.XMLParser(encoding='utf-8')
   tree = etree.parse(args.annotate, parser)
@@ -132,6 +136,7 @@ if __name__ == "__main__":
         n_ambig_terms += len(ambiguous_annotations)
 
         ambiguous_groups = [a.grp for a in ambiguous_annotations]
+        statistics.update('|'.join(ambiguous_groups))
 
         # Getting probabilities from the classifier
         to_classify = ambiguous_annotations[0]
@@ -159,5 +164,10 @@ if __name__ == "__main__":
 
   if args.verbose:
     sys.stderr.write('#TOTAL AMBIG TERMS\t' + str(n_ambig_terms) + '\n')
+
+  # Ambiguous group statistics
+  for group_stat in statistics.most_common():
+    sys.stderr.write('#STAT_CASES %s\t%s' % group_stat)
+  sys.stderr.write('#STAT_CASES Total\t%s' % sum(dict(c).values()))
  
   sys.stdout.write(etree.tostring(tree, pretty_print=True, encoding=unicode))
