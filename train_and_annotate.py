@@ -75,6 +75,10 @@ if __name__ == "__main__":
 
     annotations += data.load_unambiguous_annotations(ssc_file, exclude_unit_ids)
 
+  # Filtering out annotations that have multiple groups
+  sys.stderr.write('filtering out multi-group annotations\n')
+  annotations = list(itertools.ifilter(lambda x: isinstance(x.get_group_number(), int), annotations))
+
   classifier = models.OptionAwareNaiveBayesLeftRightCutoff(window_size = 5, cutoff = 9)
   sys.stderr.write('training classifier\n')
   classifier.train(annotations)
@@ -136,7 +140,7 @@ if __name__ == "__main__":
         n_ambig_terms += len(ambiguous_annotations)
 
         ambiguous_groups = [a.grp for a in ambiguous_annotations]
-        statistics.update('|'.join(ambiguous_groups))
+        stats['|'.join(ambiguous_groups)] += 1
 
         # Getting probabilities from the classifier
         to_classify = ambiguous_annotations[0]
@@ -166,8 +170,8 @@ if __name__ == "__main__":
     sys.stderr.write('#TOTAL AMBIG TERMS\t' + str(n_ambig_terms) + '\n')
 
   # Ambiguous group statistics
-  for group_stat in statistics.most_common():
-    sys.stderr.write('#STAT_CASES %s\t%s' % group_stat)
-  sys.stderr.write('#STAT_CASES Total\t%s' % sum(dict(c).values()))
+  for group_stat in stats.most_common():
+    sys.stderr.write('#STAT_CASES %s\t%s\n' % group_stat)
+  sys.stderr.write('#STAT_CASES Total\t%s\n' % sum(dict(stats).values()))
  
   sys.stdout.write(etree.tostring(tree, pretty_print=True, encoding=unicode))
